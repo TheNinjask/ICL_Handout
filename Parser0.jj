@@ -1,0 +1,175 @@
+PARSER_BEGIN(Parser)
+
+
+/** ID lister. */
+public class Parser {
+
+  /** Main entry point. */
+  public static void main(String args[]) {
+    Parser parser = new Parser(System.in);
+    ASTNode exp;
+    Env env = new Env(); 
+    while (true) {
+    try {
+    exp = parser.Start();
+    exp.eval(env).show();
+    } catch (Exception e) {
+      System.out.println (e.getMessage());
+      System.out.println ("Syntax Error!");
+      parser.ReInit(System.in);
+    }
+    }
+  }
+
+}
+
+PARSER_END(Parser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\r"
+}
+
+TOKEN :
+{
+  < QUIT: ("quit")|("QUIT")|("Quit")>
+  |
+  < FUN: ("fun")|("FUN")|("Fun")>
+  |
+  < ASSIGN: "->">
+  |
+  < MATCH: "==">
+  |
+  < NOT_MATCH: ("~=")|("!=")> 
+  |
+  < LESS_EQUAL: "<=">
+  |
+  < LESS: "<" >
+  |
+  < GREATER_EQUAL: ">=">
+  |
+  < GREATER: ">">
+  |
+  < AND: "&&">
+  |
+  < OR: "||">
+  |
+  < NOT: ("~")|("!")>
+  |
+  < LET: ("let")|("LET")|("Let") >
+  | 
+  < EQUAL: "=" >
+  |
+  < IN: ("in")|("IN")|("In")>
+  |
+  < END: ("end")|("END")|("End")>
+  |
+  < Bool: ("true")|("TRUE")|("True")|("false")|("FALSE")|("False")>
+  |
+  < Id: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
+  |
+  < Num: (["0"-"9"]) + >
+  |
+  < PLUS : "+" >
+  |
+  < MINUS : "-">
+  |
+  < TIMES : "*">
+  |
+  < DIV : "/">
+  |
+  < LPAR : "(" >
+  |
+  < RPAR : ")" >
+  |
+  < EL: "\n" >
+}
+
+ASTNode Start():
+{ ASTNode t; }
+{
+   t = Exp() <EL>
+   //| <QUIT> {System.exit(0);} //this solution seems dorty :s and does not work...
+   { return t; }
+}
+
+ASTNode Exp() :
+{ Token op;
+  ASTNode t1, t2; }
+{
+     t1=Term() ( ( op=<PLUS> | op=<MINUS> | op=<OR>) t2=Term() 
+                 { if (op.kind == PLUS) 
+                        t1 = new ASTPlus(t1,t2);
+                   else if(op.kind == MINUS)
+                        t1 = new ASTSub(t1,t2);
+                   else 
+                        t1 = new ASTOr(t1,t2); 
+                 } 
+               ) *
+     { return t1; } 
+}
+
+ASTNode Term() :
+{
+  Token op;
+  ASTNode t1, t2;
+}
+{
+     t1=Fact() ( ( op=<TIMES> | op=<DIV> | op=<AND>) t2=Fact() 
+                  {
+                    if(op.kind == TIMES)
+                        t1 = new ASTTimes(t1,t2);
+                    else  if(op.kind == DIV)
+                        t1 = new ASTDiv(t1, t2);
+                    else
+                        t1 = new ASTAnd(t1,t2);
+                  }
+                )*
+    {return t1;}
+}
+
+
+ASTNode Fact() :
+{ Token n; 
+  ASTNode t1;
+  ASTNode t2;
+  }
+{
+   ( n=<Num> { t1 = new ASTNum(Integer.parseInt(n.image)); }
+        | n=<Bool> {t1 = new ASTBool(Boolean.parseBoolean(n.image));} 
+        | <LPAR> t1=Exp() <RPAR> 
+        | <MINUS> t1=Fact() { IValue tmp = t1.eval(new Env()); if(tmp instanceof VInt){
+          t1 = new ASTNum(-((VInt)tmp).getval());
+        }else{throw new TypeError("- unary operator undefined for that");}}
+        | <NOT> t1=Fact() { IValue tmp = t1.eval(new Env()); if(tmp instanceof VBool){
+          t1 = new ASTBool(!((VBool)tmp).getBool());
+        }else{throw new TypeError("- unary operator undefined for that");}}
+        | <PLUS> t1=Fact()
+        | n=<Id> {t1 = new ASTId(n.image);}
+        | <LET> n=<Id> <EQUAL> t1=Exp() <IN> t2=Exp() <END> {t1 = new ASTLet(n.image, t1, t2);}
+    )
+   { return t1; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
