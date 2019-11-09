@@ -94,6 +94,11 @@ public class CodeBlock {
             sl == null ? "Ljava/lang/Object" : sl.getLabel()
         ));
         emit("astore 4"); 
+        try {
+            currentFrame.dump(".");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         currentFrame = sl;
     }
 

@@ -46,6 +46,9 @@ public class Env<T>{
                 comp.emit(String.format("getfield %s/sl %s;", frame.getId(), frame.getSl().getLabel()));
                 return ancestor.find(id, frame.getSl(), comp);
             }
+        comp.emit(String.format("getfield %s/%s %s",
+            frame.getId(), val, "I")
+        );
         return val;
     }
 

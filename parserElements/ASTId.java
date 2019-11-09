@@ -17,9 +17,6 @@ public class ASTId implements ASTNode {
     @Override
     public void compile(Env<String> env, CodeBlock comp) {
         comp.emit("aload 4");
-        String store = env.find(val, comp.getCurrentFrame(), comp);
-        comp.emit(String.format("getfield %s/%s %s",
-            comp.getCurrentFrame().getId(), store, "I"
-        ));
+        env.find(val, comp.getCurrentFrame(), comp);
     }
 }

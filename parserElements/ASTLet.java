@@ -44,7 +44,6 @@ public class ASTLet implements ASTNode {
                 "I"
             ));  
         }
-        //dumpframe
         body.compile(newEnv, comp);
         comp.endFrame();
         newEnv.endScope();

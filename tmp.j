@@ -32,12 +32,12 @@
 	sipush 2
 	aload 4
 	getfield f1/sl Lf0;
-	getfield f1/x0 I
+	getfield f0/x0 I
 	iadd
 	putfield f1/x0 I
 	aload 4
 	getfield f1/sl Lf0;
-	getfield f1/x0 I
+	getfield f0/x0 I
 	aload 4
 	getfield f1/x0 I
 	iadd
