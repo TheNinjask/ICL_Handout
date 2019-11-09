@@ -1,2 +1,3 @@
-title Parsing
-javacc Parser0.jj && javac Parser.java && cls && title java Parser && java Parser
+@echo off
+title Parsing && cls
+javacc Parser0.jj && javac *.java && cls && title java Parser && java Parser

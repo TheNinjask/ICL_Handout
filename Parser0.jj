@@ -1,25 +1,98 @@
 PARSER_BEGIN(Parser)
 
+/** MA imports */
 
+import parserElements.*;
+import parserExceptions.*;
+import compilerElements.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 /** ID lister. */
 public class Parser {
 
+  private static final String OUT_FILE = "-o";
+
+  private static final String IN_FILE = "-i";
+
   /** Main entry point. */
   public static void main(String args[]) {
-    Parser parser = new Parser(System.in);
-    ASTNode exp;
-    Env env = new Env(); 
-    while (true) {
-    try {
-    exp = parser.Start();
-    exp.eval(env).show();
-    } catch (Exception e) {
-      System.out.println (e.getMessage());
-      System.out.println ("Syntax Error!");
-      parser.ReInit(System.in);
+    boolean compile = false;
+    String filename = null;
+    String inputFile = null;
+    for(int i=0; i<args.length; i++){
+      switch(args[i]){
+        case OUT_FILE:
+          if(++i<args.length){
+            filename = args[i];
+            if(!filename.endsWith("\\.j"))
+              filename = String.format("%s.j", filename);
+            compile = true;
+          }else{
+            System.out.println(String.format("Flag %s need at least 1 argument!", args[i-1]));
+            System.exit(1);  
+          }
+          break;
+        case IN_FILE:
+          if(++i<args.length){
+            inputFile = args[i];
+          }else{
+            System.out.println(String.format("Flag %s need at least 1 argument!", args[i-1]));
+            System.exit(1);  
+          }
+          break;
+        default:
+          System.out.println(String.format("Flag %s not recognized!", args[i]));
+          System.exit(1);
+      }
     }
-    }
+    Parser parser;
+    if(inputFile==null)
+      parser = new Parser(System.in);
+    else
+      try{
+        parser = new Parser(new FileInputStream(inputFile));
+      }catch(FileNotFoundException e){
+        System.out.println(e.getMessage());
+        System.exit(1);
+        return;
+      }
+    if(compile)
+      compiler(parser, filename);
+    else
+      interpreter(parser);
   }
+
+  private static final void interpreter(Parser parser){
+      ASTNode exp;
+      Env env = new Env<IValue>();
+      while (true) {
+        try {
+          System.out.print("> ");
+          exp = parser.Start();
+          exp.eval(env).show();
+          System.out.println();
+        } catch (Exception e) {
+          System.out.println (String.format("Syntax Error: %s",e.getMessage()));
+          parser.ReInit(System.in);
+        }
+      }
+    }
+
+    private static final void compiler(Parser parser, String filename){
+      ASTNode exp;
+      Env env = new Env<FrameComp>();
+      CodeBlock comp = CodeBlock.getInstance();
+      try {
+        System.out.print("> ");
+        exp = parser.Start();
+        exp.compile(env, comp);
+        comp.dump(filename);
+      } catch (Exception e) {
+        System.out.println(String.format("Syntax Error: %s",e.getMessage()));
+      }
+    }
 
 }
 
@@ -30,15 +103,32 @@ SKIP :
   " "
 | "\t"
 | "\r"
+//| "\n"
 }
 
 TOKEN :
 {
   < QUIT: ("quit")|("QUIT")|("Quit")>
   |
+  < FINAL: ";;">
+  |
   < FUN: ("fun")|("FUN")|("Fun")>
   |
-  < ASSIGN: "->">
+  < NEW: ("new")|("NEW")|("New")>
+  |
+  < IF: ("if")|("IF")|("If")>
+  |
+  < THEN: ("then")|("THEN")|("Then")>
+  |
+  < ELSE: ("else")|("ELSE")|("Else")>
+  |
+  < WHILE: ("while")|("WHILE")|("While")>
+  |
+  < DO: ("do")|("DO")|("Do")>
+  |
+  < POINT: "->">
+  |
+  < ASSIGN: ":=">
   |
   < MATCH: "==">
   |
@@ -61,6 +151,10 @@ TOKEN :
   < LET: ("let")|("LET")|("Let") >
   | 
   < EQUAL: "=" >
+  |
+  < COMMA: "," >
+  |
+  < SEMICOLON: ";">
   |
   < IN: ("in")|("IN")|("In")>
   |
@@ -90,8 +184,10 @@ TOKEN :
 ASTNode Start():
 { ASTNode t; }
 {
+   (
    t = Exp() <EL>
-   //| <QUIT> {System.exit(0);} //this solution seems dorty :s and does not work...
+   | <QUIT><LPAR><RPAR><EL> {t=null;System.exit(0);} //this solution seems dorty :s
+   )
    { return t; }
 }
 
@@ -132,44 +228,33 @@ ASTNode Term() :
 
 
 ASTNode Fact() :
-{ Token n; 
-  ASTNode t1;
-  ASTNode t2;
-  }
+{ 
+  Token n;
+  ASTNode t1, t2;
+  Map<String, ASTNode> map = new HashMap();
+}
 {
-   ( n=<Num> { t1 = new ASTNum(Integer.parseInt(n.image)); }
-        | n=<Bool> {t1 = new ASTBool(Boolean.parseBoolean(n.image));} 
-        | <LPAR> t1=Exp() <RPAR> 
-        | <MINUS> t1=Fact() { IValue tmp = t1.eval(new Env()); if(tmp instanceof VInt){
-          t1 = new ASTNum(-((VInt)tmp).getval());
-        }else{throw new TypeError("- unary operator undefined for that");}}
-        | <NOT> t1=Fact() { IValue tmp = t1.eval(new Env()); if(tmp instanceof VBool){
-          t1 = new ASTBool(!((VBool)tmp).getBool());
-        }else{throw new TypeError("- unary operator undefined for that");}}
-        | <PLUS> t1=Fact()
-        | n=<Id> {t1 = new ASTId(n.image);}
-        | <LET> n=<Id> <EQUAL> t1=Exp() <IN> t2=Exp() <END> {t1 = new ASTLet(n.image, t1, t2);}
+   (
+      n=<Num> { t1 = new ASTNum(Integer.parseInt(n.image)); }
+      | n=<Bool> {t1 = new ASTBool(Boolean.parseBoolean(n.image));} 
+      | <LPAR> t1=Exp() <RPAR> 
+      | <MINUS> t1=Fact() { t1=new ASTInvertInt(t1);} 
+      | <NOT> t1=Fact() { t1=new ASTInvertBool(t1);}
+      | <PLUS> t1=Fact()
+      | n=<Id> {t1 = new ASTId(n.image);}
+      | <LET> 
+        (n=<Id> <EQUAL> t1=Exp() {
+          t2=map.put(n.image, t1);
+          if(t2!=null)
+            throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
+          }
+          )+   
+        <IN> t2=Exp() <END> 
+      {
+        t1 = new ASTLet(
+          map, 
+          t2);
+      }
     )
    { return t1; }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

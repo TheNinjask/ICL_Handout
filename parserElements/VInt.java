@@ -1,4 +1,6 @@
-public class VInt implements IValue{	
+package parserElements;
+
+public class VInt implements IValue {
     int	v;	
     public VInt(int v0){
         v=v0;
