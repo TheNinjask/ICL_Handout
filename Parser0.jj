@@ -16,11 +16,13 @@ public class Parser {
 
   private static final String IN_FILE = "-i";
 
+  private static final String JAR_JASMINE = "-j";
   /** Main entry point. */
   public static void main(String args[]) {
     boolean compile = false;
     String filename = null;
     String inputFile = null;
+    String jasminJar = null;
     for(int i=0; i<args.length; i++){
       switch(args[i]){
         case OUT_FILE:
@@ -37,6 +39,14 @@ public class Parser {
         case IN_FILE:
           if(++i<args.length){
             inputFile = args[i];
+          }else{
+            System.out.println(String.format("Flag %s need at least 1 argument!", args[i-1]));
+            System.exit(1);  
+          }
+          break;
+        case JAR_JASMINE:
+          if(++i<args.length){
+            jasminJar = args[i];
           }else{
             System.out.println(String.format("Flag %s need at least 1 argument!", args[i-1]));
             System.exit(1);  
@@ -59,7 +69,7 @@ public class Parser {
         return;
       }
     if(compile)
-      compiler(parser, filename);
+      compiler(parser, filename, jasminJar);
     else
       interpreter(parser);
   }
@@ -80,7 +90,7 @@ public class Parser {
       }
     }
 
-    private static final void compiler(Parser parser, String filename){
+    private static final void compiler(Parser parser, String filename, String jasminJar){
       ASTNode exp;
       Env env = new Env<FrameComp>();
       CodeBlock comp = CodeBlock.getInstance();
@@ -89,7 +99,8 @@ public class Parser {
         exp = parser.Start();
         exp.compile(env, comp);
         comp.dump(filename);
-        comp.compJasminWin(filename, "C:\\Users\\Utilizador\\Documents\\GitHub\\BicaDB\\folders\\FCT\\ICL\\ICL_jasmin\\jasmin-2.4\\jasmin.jar");
+        if(jasminJar!=null)
+          comp.compJasminWin(filename, jasminJar);
       } catch (Exception e) {
         System.out.println(String.format("Syntax Error: %s",e.getMessage()));
       }

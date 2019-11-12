@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -143,7 +142,7 @@ public class CodeBlock {
         out.write("\tinvokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n");
         out.write("\tinvokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n");
         out.write("\treturn\n");
-        out.write(".end method");
+        out.write(".end method\n");
     }
 
 }

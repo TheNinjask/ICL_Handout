@@ -12,7 +12,7 @@ public class ASTTimes implements ASTNode {
         this.t2 = t2;
     }
 
-    public IValue eval(Env env) {
+    public IValue eval(Env<IValue> env) {
         IValue v1 = t1.eval(env);
         String error = v1.getClass().getSimpleName();
         if (v1 instanceof VInt) {
@@ -26,7 +26,7 @@ public class ASTTimes implements ASTNode {
     }
 
     @Override
-    public void compile(Env env, CodeBlock comp) {
+    public void compile(Env<String> env, CodeBlock comp) {
         // TODO Auto-generated method stub
         t1.compile(env, comp);
         t2.compile(env, comp);
