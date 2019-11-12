@@ -10,12 +10,12 @@ public class ASTNum implements ASTNode {
         this.val = val;
     }
 
-    public IValue eval(Env env) {
+    public IValue eval(Env<IValue> env) {
         return new VInt(val);
     }
 
     @Override
-    public void compile(Env env, CodeBlock comp) {
+    public void compile(Env<String> env, CodeBlock comp) {
         comp.emit(String.format("sipush %s", val));
     }
 }
