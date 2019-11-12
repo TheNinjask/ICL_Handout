@@ -11,7 +11,7 @@ public class ASTInvertBool implements ASTNode {
         this.value = value;
     }
 
-    public IValue eval(Env env) {
+    public IValue eval(Env<IValue> env) {
         IValue res = value.eval(env);
         String error = res.getClass().getSimpleName();
         if (res instanceof VBool) {
@@ -21,7 +21,7 @@ public class ASTInvertBool implements ASTNode {
     }
 
     @Override
-    public void compile(Env env, CodeBlock comp) {
+    public void compile(Env<String> env, CodeBlock comp) {
         // TODO Auto-generated method stub
     }
 }

@@ -49,37 +49,39 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int NOT = 23;
   /** RegularExpression Id. */
-  int LET = 24;
+  int DEASSIGN = 24;
   /** RegularExpression Id. */
-  int EQUAL = 25;
+  int LET = 25;
   /** RegularExpression Id. */
-  int COMMA = 26;
+  int EQUAL = 26;
   /** RegularExpression Id. */
-  int SEMICOLON = 27;
+  int COMMA = 27;
   /** RegularExpression Id. */
-  int IN = 28;
+  int SEMICOLON = 28;
   /** RegularExpression Id. */
-  int END = 29;
+  int IN = 29;
   /** RegularExpression Id. */
-  int Bool = 30;
+  int END = 30;
   /** RegularExpression Id. */
-  int Id = 31;
+  int Bool = 31;
   /** RegularExpression Id. */
-  int Num = 32;
+  int Id = 32;
   /** RegularExpression Id. */
-  int PLUS = 33;
+  int Num = 33;
   /** RegularExpression Id. */
-  int MINUS = 34;
+  int PLUS = 34;
   /** RegularExpression Id. */
-  int TIMES = 35;
+  int MINUS = 35;
   /** RegularExpression Id. */
-  int DIV = 36;
+  int TIMES = 36;
   /** RegularExpression Id. */
-  int LPAR = 37;
+  int DIV = 37;
   /** RegularExpression Id. */
-  int RPAR = 38;
+  int LPAR = 38;
   /** RegularExpression Id. */
-  int EL = 39;
+  int RPAR = 39;
+  /** RegularExpression Id. */
+  int EL = 40;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -109,7 +111,8 @@ public interface ParserConstants {
     "\">\"",
     "\"&&\"",
     "\"||\"",
-    "<NOT>",
+    "\"~\"",
+    "\"!\"",
     "<LET>",
     "\"=\"",
     "\",\"",

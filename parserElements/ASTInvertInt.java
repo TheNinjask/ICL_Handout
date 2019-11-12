@@ -11,7 +11,7 @@ public class ASTInvertInt implements ASTNode {
         this.value = value;
     }
 
-    public IValue eval(Env env) {
+    public IValue eval(Env<IValue> env) {
         IValue res = value.eval(env);
         String error = res.getClass().getSimpleName();
         if (res instanceof VInt) {
@@ -21,7 +21,8 @@ public class ASTInvertInt implements ASTNode {
     }
 
     @Override
-    public void compile(Env env, CodeBlock comp) {
-        // TODO Auto-generated method stub
+    public void compile(Env<String> env, CodeBlock comp) {
+        value.compile(env, comp);
+        comp.emit("ineg");
     }
 }

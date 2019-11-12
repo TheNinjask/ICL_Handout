@@ -146,7 +146,9 @@ TOKEN :
   |
   < OR: "||">
   |
-  < NOT: ("~")|("!")>
+  < NOT: ("~")>
+  |
+  < DEASSIGN: "!">
   |
   < LET: ("let")|("LET")|("Let") >
   | 
@@ -185,23 +187,57 @@ ASTNode Start():
 { ASTNode t; }
 {
    (
-   t = Exp() <EL>
+   t = Won() <EL>
    | <QUIT><LPAR><RPAR><EL> {t=null;System.exit(0);} //this solution seems dorty :s
    )
    { return t; }
+}
+
+ASTNode Won() :
+{ Token op;
+  ASTNode t1, t2; }
+{
+     t1=Lon() ( ( op=<AND> | op=<OR>) t2=Lon() 
+                 { if (op.kind == AND) 
+                        t1 = new ASTAnd(t1,t2);
+                   else 
+                        t1 = new ASTOr(t1,t2); 
+                 } 
+               ) *
+     { return t1; } 
+}
+
+ASTNode Lon() :
+{ Token op;
+  ASTNode t1, t2; }
+{
+     t1=Exp() (
+       ( op=<MATCH> | op=<GREATER> | op=<GREATER_EQUAL> | op=<LESS> | op=<LESS_EQUAL>
+     ) t2=Exp() 
+                 { if (op.kind == MATCH) 
+                        t1 = new ASTEq(t1,t2);
+                   else if(op.kind == GREATER)
+                        t1 = new ASTGreater(t1,t2);
+                   else if(op.kind == GREATER_EQUAL)
+                        t1 = new ASTGreaterEq(t1,t2);
+                   else if(op.kind == LESS)
+                        t1 = new ASTLess(t1,t2);
+                   else
+                        t1 = new ASTLessEq(t1,t2);
+                 } 
+               ) *
+     { return t1; } 
 }
 
 ASTNode Exp() :
 { Token op;
   ASTNode t1, t2; }
 {
-     t1=Term() ( ( op=<PLUS> | op=<MINUS> | op=<OR>) t2=Term() 
+     t1=Term() ( ( op=<PLUS> | op=<MINUS>) t2=Term() 
                  { if (op.kind == PLUS) 
                         t1 = new ASTPlus(t1,t2);
-                   else if(op.kind == MINUS)
+                   else
                         t1 = new ASTSub(t1,t2);
-                   else 
-                        t1 = new ASTOr(t1,t2); 
                  } 
                ) *
      { return t1; } 
@@ -213,14 +249,12 @@ ASTNode Term() :
   ASTNode t1, t2;
 }
 {
-     t1=Fact() ( ( op=<TIMES> | op=<DIV> | op=<AND>) t2=Fact() 
+     t1=Fact() ( ( op=<TIMES> | op=<DIV>) t2=Fact() 
                   {
                     if(op.kind == TIMES)
                         t1 = new ASTTimes(t1,t2);
-                    else  if(op.kind == DIV)
-                        t1 = new ASTDiv(t1, t2);
                     else
-                        t1 = new ASTAnd(t1,t2);
+                        t1 = new ASTDiv(t1, t2);
                   }
                 )*
     {return t1;}
@@ -255,6 +289,7 @@ ASTNode Fact() :
           map, 
           t2);
       }
+      //| <NEW> t1=Fact() {}
     )
    { return t1; }
 }

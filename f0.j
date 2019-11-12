@@ -2,6 +2,7 @@
 .super java/lang/Object
 .field public sl Ljava/lang/Object;
 .field public x0 I
+.field public x1 I
 
 .method public <init>()V
 	aload_0

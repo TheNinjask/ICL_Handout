@@ -1,21 +1,23 @@
 package parserElements;
 
 public class VCell implements IValue {
-    IValue v;	
+    
+    IValue value;	
+    
     public VCell(IValue	v0){
-        v=v0;
+        value=v0;
     }
     
     public IValue get()
     {
-        return	v;
+        return	value;
     }	
     
     public void set(IValue v0){
-        v=v0;
+        value=v0;
     }
 
     public void show(){
-        
+        value.show();
     }	
 }	
