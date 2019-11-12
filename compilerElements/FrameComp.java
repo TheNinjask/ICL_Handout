@@ -53,8 +53,9 @@ public class FrameComp {
         return hopeDreams.get(field);
     }
 
-    public void dump(String path) throws IOException {
-        BufferedWriter out = new BufferedWriter(new FileWriter(Paths.get(path, String.format("%s.j", id)).toString()));
+    public String dump(String path) throws IOException {
+        String truePath = Paths.get(path, String.format("%s.j", id)).toString();
+        BufferedWriter out = new BufferedWriter(new FileWriter(truePath));
         out.write(String.format(".class %s\n", id));
         out.write(".super java/lang/Object\n");
         out.write(String.format(".field public sl %s;\n", 
@@ -71,5 +72,6 @@ public class FrameComp {
         out.write(".end method\n");
         out.flush();
         out.close();
+        return truePath;
     }
 }

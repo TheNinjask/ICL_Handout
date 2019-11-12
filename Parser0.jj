@@ -89,6 +89,7 @@ public class Parser {
         exp = parser.Start();
         exp.compile(env, comp);
         comp.dump(filename);
+        comp.compJasminWin(filename, "C:\\Users\\Utilizador\\Documents\\GitHub\\BicaDB\\folders\\FCT\\ICL\\ICL_jasmin\\jasmin-2.4\\jasmin.jar");
       } catch (Exception e) {
         System.out.println(String.format("Syntax Error: %s",e.getMessage()));
       }
@@ -187,8 +188,17 @@ ASTNode Start():
 { ASTNode t; }
 {
    (
-   t = Won() <EL>
+   t = Em() <EL>
    | <QUIT><LPAR><RPAR><EL> {t=null;System.exit(0);} //this solution seems dorty :s
+   )
+   { return t; }
+}
+
+ASTNode Em():
+{ ASTNode t; }
+{
+   (
+   t = Won() (<SEMICOLON> t = Won())*
    )
    { return t; }
 }
@@ -249,7 +259,7 @@ ASTNode Term() :
   ASTNode t1, t2;
 }
 {
-     t1=Fact() ( ( op=<TIMES> | op=<DIV>) t2=Fact() 
+     t1=Fact() ( ( op=<TIMES> | op=<DIV> | op=<ASSIGN>) t2=Fact() 
                   {
                     if(op.kind == TIMES)
                         t1 = new ASTTimes(t1,t2);

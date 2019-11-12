@@ -1,9 +1,13 @@
 package compilerElements;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodeBlock {
 
@@ -15,24 +19,26 @@ public class CodeBlock {
     private long incFrame;
     private StringBuffer inst;
     private FrameComp currentFrame;
+    private List<String> frames;
 
     private CodeBlock() {
         incFrame = 0L;
         incLabel = 0L;
         inst = new StringBuffer();
         currentFrame = null;
+        frames = new ArrayList<>();
     }
 
     public static CodeBlock getInstance() {
         return instance;
     }
 
-    public void setCurrentFrame(FrameComp newFrame){
+    public void setCurrentFrame(FrameComp newFrame) {
         this.currentFrame = newFrame;
     }
 
-    public FrameComp getCurrentFrame(FrameComp... newFrame){
-        if(newFrame.length>0)
+    public FrameComp getCurrentFrame(FrameComp... newFrame) {
+        if (newFrame.length > 0)
             this.currentFrame = newFrame[0];
         return this.currentFrame;
     }
@@ -44,14 +50,14 @@ public class CodeBlock {
     public void dump(String filename, int... args) throws IOException {
         int local;
         int stack;
-        switch (args.length){
-            case 2:
-                local = args[0];
-                stack = args[1];
-            default:
-                local = 10;
-                stack = 256;
-                break;
+        switch (args.length) {
+        case 2:
+            local = args[0];
+            stack = args[1];
+        default:
+            local = 10;
+            stack = 256;
+            break;
         }
         BufferedWriter out = new BufferedWriter(new FileWriter(filename));
         generateMainInit(out, local, stack);
@@ -59,6 +65,19 @@ public class CodeBlock {
         generateMainEnd(out);
         out.flush();
         out.close();
+    }
+
+    public void compJasminWin(String file, String... jarPath) throws IOException, InterruptedException {
+        String path = jarPath.length == 0 ? ".\\jasmin.jar" : jarPath[0];
+        String cmd = String.format("java -jar %s %s", new File(path).getAbsolutePath(), new File(file).getAbsolutePath());
+        Process proc = Runtime.getRuntime().exec(cmd);
+        // Then retreive the process output
+        proc.waitFor();
+        for (String frame : frames) {
+            cmd = String.format("java -jar %s %s", new File(path).getAbsolutePath(), new File(frame).getAbsolutePath());
+            proc = Runtime.getRuntime().exec(cmd);
+            proc.waitFor();
+        }
     }
     
     @Deprecated
@@ -95,7 +114,8 @@ public class CodeBlock {
         ));
         emit("astore 4"); 
         try {
-            currentFrame.dump(".");
+            String path = currentFrame.dump(".");
+            frames.add(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
