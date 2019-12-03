@@ -63,7 +63,7 @@ public class FrameComp {
         return translate.get(var);
     }
 
-    public String getField(String field){
+    public String getType(String field){
         return hopeDreams.get(field);
     }
 

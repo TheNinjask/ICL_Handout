@@ -36,7 +36,7 @@ public class ASTLet implements ASTNode {
         for (Entry<String, ASTNode> it : vars.entrySet()) {
             comp.emit("aload 4");
             String var = frame.addField(it.getKey(), "I");
-            it.getValue().compile(newEnv, comp);
+            it.getValue().compile(env, comp);
             newEnv.assoc(it.getKey(), frame);
             comp.emit(String.format("putfield %s/%s %s",
                 frame.getId(),

@@ -27,8 +27,9 @@ public class ASTId implements ASTNode {
             if(bot==null)
                 throw new TypeError(String.format("Undeclared Variable (%s)!", FrameComp.class.getSimpleName()));
         }
+        String field = bot.translateVar(val);
         comp.emit(String.format("getfield %s/%s %s",
-            bot.getId(), bot.translateVar(val), "I")
+            bot.getId(), field, bot.getType(field))
         );
     }
 }
