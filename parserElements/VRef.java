@@ -1,10 +1,10 @@
 package parserElements;
 
-public class VCell implements IValue {
+public class VRef implements IValue {
     
     IValue content;	
     
-    public VCell(IValue content){
+    public VRef(IValue content){
         this.content = content;
     }
     

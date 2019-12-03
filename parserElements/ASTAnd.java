@@ -1,6 +1,7 @@
 package parserElements;
 
 import compilerElements.CodeBlock;
+import compilerElements.FrameComp;
 import parserExceptions.TypeError;
 
 public class ASTAnd implements ASTNode {
@@ -26,7 +27,7 @@ public class ASTAnd implements ASTNode {
     }
 
     @Override
-    public void compile(Env<String> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, CodeBlock comp) {
         //TODO
         t1.compile(env, comp);
         t2.compile(env, comp);

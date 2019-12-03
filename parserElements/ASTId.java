@@ -1,6 +1,8 @@
 package parserElements;
 
 import compilerElements.CodeBlock;
+import compilerElements.FrameComp;
+import parserExceptions.TypeError;
 
 public class ASTId implements ASTNode {
 
@@ -15,8 +17,18 @@ public class ASTId implements ASTNode {
     }
 
     @Override
-    public void compile(Env<String> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, CodeBlock comp) {
         comp.emit("aload 4");
-        env.find(val, comp.getCurrentFrame(), comp);
+        FrameComp top = env.find(val);// , comp.getCurrentFrame(), comp);
+        FrameComp bot = comp.getCurrentFrame();
+        while(!top.getId().equals(bot.getId())){
+            comp.emit(String.format("getfield %s/sl %s;", bot.getId(), bot.getSl().getLabel()));
+            bot = bot.getSl();
+            if(bot==null)
+                throw new TypeError(String.format("Undeclared Variable (%s)!", FrameComp.class.getSimpleName()));
+        }
+        comp.emit(String.format("getfield %s/%s %s",
+            bot.getId(), bot.translateVar(val), "I")
+        );
     }
 }

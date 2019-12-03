@@ -1,6 +1,7 @@
 package parserElements;
 
 import compilerElements.CodeBlock;
+import compilerElements.FrameComp;
 import parserExceptions.TypeError;
 
 public class ASTInvertBool implements ASTNode {
@@ -21,7 +22,7 @@ public class ASTInvertBool implements ASTNode {
     }
 
     @Override
-    public void compile(Env<String> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, CodeBlock comp) {
         // TODO Auto-generated method stub
     }
 }

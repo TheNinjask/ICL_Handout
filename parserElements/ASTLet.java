@@ -29,15 +29,15 @@ public class ASTLet implements ASTNode {
     }
 
     @Override
-    public void compile(Env<String> env, CodeBlock comp) {
-        Env<String> newEnv = env.beginScope();
+    public void compile(Env<FrameComp> env, CodeBlock comp) {
+        Env<FrameComp> newEnv = env.beginScope();
         //IValue res;
         FrameComp frame = comp.genFrame(comp.getCurrentFrame());
         for (Entry<String, ASTNode> it : vars.entrySet()) {
             comp.emit("aload 4");
-            String var = frame.addField("I");
+            String var = frame.addField(it.getKey(), "I");
             it.getValue().compile(newEnv, comp);
-            newEnv.assoc(it.getKey(), var);
+            newEnv.assoc(it.getKey(), frame);
             comp.emit(String.format("putfield %s/%s %s",
                 frame.getId(),
                 var,

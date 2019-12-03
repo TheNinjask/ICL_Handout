@@ -115,12 +115,14 @@ SKIP :
   " "
 | "\t"
 | "\r"
-//| "\n"
+| "\n"
 }
 
 TOKEN :
 {
   < QUIT: ("quit")|("QUIT")|("Quit")>
+  |
+  < CLEAR: ("cls")|("CLS")|("Cls")|("clear")|("CLEAR")|("Clear")>
   |
   < FINAL: ";;">
   |
@@ -138,7 +140,7 @@ TOKEN :
   |
   < DO: ("do")|("DO")|("Do")>
   |
-  < POINT: "->">
+  < APPLY: "->">
   |
   < ASSIGN: ":=">
   |
@@ -191,50 +193,37 @@ TOKEN :
   < LPAR : "(" >
   |
   < RPAR : ")" >
-  |
-  < EL: "\n" >
+  //|
+  //< EL: "\n" >
 }
 
 ASTNode Start():
 { ASTNode t; }
 {
    (
-   t = Em() <EL>
-   | <QUIT><LPAR><RPAR><EL> {t=null;System.exit(0);} //this solution seems dorty :s
+   t = EM() <FINAL>
+   | <QUIT><LPAR><RPAR><FINAL> {t=null;System.exit(0);} //this solution seems dorty :s
+   | <CLEAR><FINAL> {t=new ASTBool(false);}//TODO
    )
    { return t; }
 }
 
-ASTNode Em():
-{ ASTNode t; }
+ASTNode EM():
+{ ASTNode t,t2; }
 {
    (
-   t = Won() (<SEMICOLON> t = Won())*
+   t = E() (LOOKAHEAD(2) <SEMICOLON> t2 = EM(){t=new ASTSeq(t,t2);})*
    )
    { return t; }
 }
 
-ASTNode Won() :
+ASTNode E() :
 { Token op;
   ASTNode t1, t2; }
 {
-     t1=Lon() ( ( op=<AND> | op=<OR>) t2=Lon() 
-                 { if (op.kind == AND) 
-                        t1 = new ASTAnd(t1,t2);
-                   else 
-                        t1 = new ASTOr(t1,t2); 
-                 } 
-               ) *
-     { return t1; } 
-}
-
-ASTNode Lon() :
-{ Token op;
-  ASTNode t1, t2; }
-{
-     t1=Exp() (
-       ( op=<MATCH> | op=<GREATER> | op=<GREATER_EQUAL> | op=<LESS> | op=<LESS_EQUAL>
-     ) t2=Exp() 
+     t1=EA() ( LOOKAHEAD(2)
+       ( op=<GREATER_EQUAL>| op=<GREATER> | op=<LESS_EQUAL> | op=<LESS> | op=<MATCH> |op=<AND> | op=<OR>
+     ) t2=EA() 
                  { if (op.kind == MATCH) 
                         t1 = new ASTEq(t1,t2);
                    else if(op.kind == GREATER)
@@ -243,34 +232,46 @@ ASTNode Lon() :
                         t1 = new ASTGreaterEq(t1,t2);
                    else if(op.kind == LESS)
                         t1 = new ASTLess(t1,t2);
-                   else
+                   else if(op.kind == LESS_EQUAL)
                         t1 = new ASTLessEq(t1,t2);
+                   else if (op.kind == AND) 
+                        t1 = new ASTAnd(t1,t2);
+                   else 
+                        t1 = new ASTOr(t1,t2); 
                  } 
-               ) *
+               ) ?
      { return t1; } 
 }
 
-ASTNode Exp() :
+ASTNode EA() :
 { Token op;
   ASTNode t1, t2; }
 {
-     t1=Term() ( ( op=<PLUS> | op=<MINUS>) t2=Term() 
+     t1=T() ( LOOKAHEAD(2) ( op=<PLUS> | op=<MINUS>) t2=EA() 
                  { if (op.kind == PLUS) 
                         t1 = new ASTPlus(t1,t2);
                    else
                         t1 = new ASTSub(t1,t2);
                  } 
                ) *
+               
      { return t1; } 
 }
 
-ASTNode Term() :
+ASTNode T():
 {
   Token op;
   ASTNode t1, t2;
 }
 {
-     t1=Fact() ( ( op=<TIMES> | op=<DIV> | op=<ASSIGN>) t2=Fact() 
+  t1=F() ( 
+                ( op=<ASSIGN>) t2=E() 
+                  {
+                    t1 = new ASTAssign(t1,t2);
+                  }
+                
+                |
+                ( LOOKAHEAD(2) ( op=<TIMES> | op=<DIV>) t2=T() 
                   {
                     if(op.kind == TIMES)
                         t1 = new ASTTimes(t1,t2);
@@ -278,39 +279,78 @@ ASTNode Term() :
                         t1 = new ASTDiv(t1, t2);
                   }
                 )*
+                )
     {return t1;}
 }
 
+/*ASTNode AL():
+{
+  Token op;
+  ASTNode t, t2;
+}
+{
+  (t = EM() (
+              (op=<COMMA>) t2=EM()
+             
+            
+            )*
 
-ASTNode Fact() :
+  )?
+}*/
+
+/*ASTNode PL():
+{
+  Token op;
+  ASTNode t, t2;
+}
+{
+  (t = EM() (
+              (op=<COMMA>) t2=EM()
+             
+            
+            )*
+
+  )?
+}*/
+
+ASTNode F() :
 { 
   Token n;
-  ASTNode t1, t2;
+  ASTNode t1, t2, t3;
   Map<String, ASTNode> map = new HashMap();
 }
 {
    (
       n=<Num> { t1 = new ASTNum(Integer.parseInt(n.image)); }
       | n=<Bool> {t1 = new ASTBool(Boolean.parseBoolean(n.image));} 
-      | <LPAR> t1=Exp() <RPAR> 
-      | <MINUS> t1=Fact() { t1=new ASTInvertInt(t1);} 
-      | <NOT> t1=Fact() { t1=new ASTInvertBool(t1);}
-      | <PLUS> t1=Fact()
+      | <LPAR> t1=EM() <RPAR> 
+      | <MINUS> t1=F() { t1=new ASTInvertInt(t1);} 
+      | <NOT> t1=F() { t1=new ASTInvertBool(t1);}
+      | <PLUS> t1=F()
       | n=<Id> {t1 = new ASTId(n.image);}
       | <LET> 
-        (n=<Id> <EQUAL> t1=Exp() {
+        (n=<Id> <EQUAL> t1=EM() {
           t2=map.put(n.image, t1);
           if(t2!=null)
             throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
           }
           )+   
-        <IN> t2=Exp() <END> 
+        <IN> t2=EM() <END> 
       {
         t1 = new ASTLet(
           map, 
           t2);
       }
-      //| <NEW> t1=Fact() {}
+      | <NEW> t1=F() { t1=new ASTRef(t1);}
+      | <DEASSIGN> t1=F() {t1=new ASTDeRef(t1);}
+      | <IF> t1=EM() <THEN> t2=EM() <ELSE> t3=EM() <END>
+      {
+        t1 = new ASTIf(t1, t2, t3);
+      }
+      | <WHILE> t1=EM() <DO> t2=EM() <END>
+      {
+        t1 = new ASTWhile(t1, t2);
+      }
     )
    { return t1; }
 }

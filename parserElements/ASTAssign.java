@@ -1,6 +1,7 @@
 package parserElements;
 
 import compilerElements.CodeBlock;
+import compilerElements.FrameComp;
 import parserExceptions.TypeError;
 
 public class ASTAssign implements ASTNode {
@@ -16,14 +17,14 @@ public class ASTAssign implements ASTNode {
     public IValue eval(Env<IValue> env) {
         IValue iRef = ref.eval(env);
         IValue iVal = value.eval(env);
-        if(!(iRef instanceof VCell))
+        if(!(iRef instanceof VRef))
             throw new TypeError("Assignment to non reference!");
-        ((VCell)iRef).set(iVal);
-        return iRef;
+        ((VRef)iRef).set(iVal);
+        return iVal;
     }
 
     @Override
-    public void compile(Env<String> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, CodeBlock comp) {
         //TODO 
     }
 }

@@ -16,11 +16,13 @@ public class FrameComp {
     private String id;
     private FrameComp sl;
     private Map<String, String> hopeDreams;
+    private Map<String, String> translate;
 
     public FrameComp(String id) {
         this.id = id;
         this.sl = null;
         this.hopeDreams = new HashMap<>();
+        this.translate = new HashMap<>();
         this.fieldCounter = 0;
     }
 
@@ -28,6 +30,7 @@ public class FrameComp {
         this.id = id;
         this.sl = sl;
         this.hopeDreams = new HashMap<>();
+        this.translate = new HashMap<>();
         this.fieldCounter = 0;
     }
 
@@ -47,6 +50,17 @@ public class FrameComp {
         String field = String.format(FIELD_FORMAT, fieldCounter++);
         hopeDreams.put(field, type);
         return field;
+    }
+
+    public String addField(String var, String type) {
+        String field = String.format(FIELD_FORMAT, fieldCounter++);
+        hopeDreams.put(field, type);
+        translate.put(var, field);
+        return field;
+    }
+
+    public String translateVar(String var){
+        return translate.get(var);
     }
 
     public String getField(String field){

@@ -1,6 +1,7 @@
 package parserElements;
 
 import compilerElements.CodeBlock;
+import compilerElements.FrameComp;
 
 public class ASTNum implements ASTNode {
 
@@ -15,7 +16,7 @@ public class ASTNum implements ASTNode {
     }
 
     @Override
-    public void compile(Env<String> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, CodeBlock comp) {
         comp.emit(String.format("sipush %s", val));
     }
 }
