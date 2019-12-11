@@ -16,10 +16,10 @@ public class ASTEq implements ASTNode {
     public IValue eval(Env<IValue> env) {
         IValue v1 = t1.eval(env);
         String error = v1.getClass().getSimpleName();
-        if (v1 instanceof VBool) {
+        if (v1 instanceof VInt) {
             IValue v2 = t2.eval(env);
-            if (v2 instanceof VBool) {
-                return new VBool(((VBool) v1).getBool() == ((VBool) v2).getBool());
+            if (v2 instanceof VInt) {
+                return new VBool(((VInt) v1).getval() == ((VInt) v2).getval());
             }
             error = v2.getClass().getSimpleName();
         }
@@ -29,8 +29,16 @@ public class ASTEq implements ASTNode {
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
         //TODO
-        //t1.compile(env, comp);
-        //t2.compile(env, comp);
-        //comp.emit("iand");
+        String elsy = comp.genLabel();
+        String exit = comp.genLabel();
+        t1.compile(env, comp);
+        t2.compile(env, comp);
+        comp.emit(String.format("if_icmpne %s", elsy));
+        comp.emit("sipush 1");
+        comp.emit(String.format("goto %s", exit));
+        comp.emit(String.format("%s:", elsy));
+        comp.emit("sipush 0");
+        comp.emit(String.format("%s:", exit));
     }
+
 }

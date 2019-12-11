@@ -7,6 +7,10 @@ import parserExceptions.*;
 import compilerElements.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 /** ID lister. */
@@ -28,7 +32,7 @@ public class Parser {
         case OUT_FILE:
           if(++i<args.length){
             filename = args[i];
-            if(!filename.endsWith("\\.j"))
+            if(!filename.endsWith(".j"))
               filename = String.format("%s.j", filename);
             compile = true;
           }else{
@@ -81,7 +85,7 @@ public class Parser {
         try {
           System.out.print("> ");
           exp = parser.Start();
-          exp.eval(env).show();
+          exp.eval(env);//.show();
           System.out.println();
         } catch (Exception e) {
           System.out.println (String.format("Syntax Error: %s",e.getMessage()));
@@ -120,6 +124,8 @@ SKIP :
 
 TOKEN :
 {
+  < PRINTLN: ("println")|("PRINTLN")|("Println")|("PrintLn")>
+  |
   < QUIT: ("quit")|("QUIT")|("Quit")>
   |
   < CLEAR: ("cls")|("CLS")|("Cls")|("clear")|("CLEAR")|("Clear")>
@@ -262,6 +268,7 @@ ASTNode T():
 {
   Token op;
   ASTNode t1, t2;
+  List<ASTNode> pseudoT;
 }
 {
   t1=F() ( 
@@ -271,6 +278,13 @@ ASTNode T():
                   }
                 
                 |
+                (
+                  <LPAR> pseudoT=AL() <RPAR>
+                  {
+                    t1 = new ASTApply(pseudoT, t1);
+                  }
+                )
+                |
                 ( LOOKAHEAD(2) ( op=<TIMES> | op=<DIV>) t2=T() 
                   {
                     if(op.kind == TIMES)
@@ -279,36 +293,37 @@ ASTNode T():
                         t1 = new ASTDiv(t1, t2);
                   }
                 )*
-                )
+          )
     {return t1;}
 }
 
-/*ASTNode AL():
+List<ASTNode> AL():
 {
   Token op;
-  ASTNode t, t2;
+  ASTNode t1, t2;
+  List<ASTNode> params = new ArrayList();
 }
 {
-  (t = EM() (
+  (t1 = EM() (
               (op=<COMMA>) t2=EM()
-             
-            
-            )*
-
+              {params.add(t2);}
+            )*  
+    {params.add(t1);}
   )?
-}*/
+  {return params;}
+}
 
 /*ASTNode PL():
 {
-  Token op;
+  Token n;
   ASTNode t, t2;
 }
-{
-  (t = EM() (
-              (op=<COMMA>) t2=EM()
-             
-            
-            )*
+{ //map use
+  (
+    n=<Id> =new TYpe
+      (
+        <COMMA> n=<Id> =new TYpe
+      )
 
   )?
 }*/
@@ -318,6 +333,7 @@ ASTNode F() :
   Token n;
   ASTNode t1, t2, t3;
   Map<String, ASTNode> map = new HashMap();
+  Set<String> params = new HashSet();
 }
 {
    (
@@ -351,6 +367,17 @@ ASTNode F() :
       {
         t1 = new ASTWhile(t1, t2);
       }
+      | <PRINTLN> t1=E() {t1 = new ASTPrintln(t1);}
+      //| <PRINTLN> <LPAR> t1=E() <RPAR>{t1 = new ASTPrintln(t1);} not worth? just for more LOOKAHEAD
+      | <FUN> 
+        (n=<Id> {
+          if(!params.add(n.image))
+            throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
+          }
+          (<COMMA>)*
+        )*
+        <APPLY> t1=EM() <END>{t1 = new ASTFunc(t1, params);}
+
     )
    { return t1; }
 }

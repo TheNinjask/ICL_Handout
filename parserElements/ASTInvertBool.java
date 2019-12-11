@@ -25,4 +25,5 @@ public class ASTInvertBool implements ASTNode {
     public void compile(Env<FrameComp> env, CodeBlock comp) {
         // TODO Auto-generated method stub
     }
+
 }

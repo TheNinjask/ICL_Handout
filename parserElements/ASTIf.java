@@ -29,6 +29,16 @@ public class ASTIf implements ASTNode {
 
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
-        //TODO 
+        String elsy = comp.genLabel();
+        String exit = comp.genLabel();
+        comp.emit("sipush 1");
+        condition.compile(env, comp);
+        comp.emit(String.format("if_icmpne %s", elsy));
+        trueBody.compile(env, comp);
+        comp.emit(String.format("goto %s", exit));
+        comp.emit(String.format("%s:", elsy));
+        falseBody.compile(env, comp);
+        comp.emit(String.format("%s:", exit));
     }
+
 }

@@ -26,4 +26,5 @@ public class ASTInvertInt implements ASTNode {
         value.compile(env, comp);
         comp.emit("ineg");
     }
+
 }

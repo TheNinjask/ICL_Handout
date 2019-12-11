@@ -20,6 +20,8 @@ public class ASTSeq implements ASTNode {
 
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
-        //TODO 
+        left.compile(env, comp);
+        right.compile(env, comp);
     }
+
 }

@@ -3,21 +3,20 @@ package parserElements;
 import compilerElements.CodeBlock;
 import compilerElements.FrameComp;
 
-public class ASTBool implements ASTNode {
+public class ASTString implements ASTNode {
 
-    boolean val;
+    String val;
 
-    public ASTBool(boolean val) {
+    public ASTString(String val) {
         this.val = val;
     }
 
     public IValue eval(Env<IValue> env) {
-        return new VBool(val);
+        return new VString(val);
     }
 
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
-        comp.emit(String.format("sipush %s", val ? 1 : 0));
+        //TODO
     }
-
 }

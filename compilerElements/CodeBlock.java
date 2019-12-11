@@ -17,6 +17,7 @@ public class CodeBlock {
     private long incLabel;
     private long incFrame;
     private StringBuffer inst;
+    private long currentOffset;
     private FrameComp currentFrame;
     private List<String> frames;
 
@@ -26,6 +27,7 @@ public class CodeBlock {
         inst = new StringBuffer();
         currentFrame = null;
         frames = new ArrayList<>();
+        currentOffset = 0L;
     }
 
     public static CodeBlock getInstance() {
@@ -44,6 +46,15 @@ public class CodeBlock {
 
     public void emit(String instruction) {
         inst.append(String.format("\t%s\n", instruction));
+        currentOffset++;
+    }
+
+    public long getCurrentOffset(){
+        return currentOffset;
+    }
+
+    public long getPreviousOffset(){
+        return currentOffset-1L;
     }
 
     public void dump(String filename, int... args) throws IOException {
@@ -79,7 +90,6 @@ public class CodeBlock {
         }
     }
     
-    @Deprecated
     public String genLabel(String... label){
         return String.format("L%s", label.length>0? label[0] : incLabel++);
     }
@@ -103,6 +113,14 @@ public class CodeBlock {
         emit("astore 4");
         currentFrame = frame;
         return frame;
+    }
+
+    public long preGenFrame(){
+        return 7L; 
+    }
+
+    public long preEndFrame(){
+        return 3L;
     }
 
     public void endFrame(){
@@ -132,15 +150,11 @@ public class CodeBlock {
         out.write(".method public static main([Ljava/lang/String;)V\n");
         out.write(String.format("\t.limit locals %s\n", local));
         out.write(String.format("\t.limit stack %s\n", stack));
-        //question urself about next line
-        out.write("\tgetstatic java/lang/System/out Ljava/io/PrintStream;\n");
         out.write("\taconst_null\n");
         out.write("\tastore 4\n");
     }
 
     private void generateMainEnd(Writer out) throws IOException {
-        out.write("\tinvokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n");
-        out.write("\tinvokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n");
         out.write("\treturn\n");
         out.write(".end method\n");
     }

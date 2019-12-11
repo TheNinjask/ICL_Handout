@@ -28,6 +28,16 @@ public class ASTWhile implements ASTNode {
 
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
-        //TODO 
+        //this might be wrong due to what happens with numerous cycles
+        String whily = comp.genLabel();
+        String exit = comp.genLabel();
+        comp.emit(String.format("%s:", whily));
+        comp.emit("sipush 1");
+        condition.compile(env, comp);
+        comp.emit(String.format("if_icmpne %s", exit));
+        body.compile(env, comp); //??
+        comp.emit(String.format("goto %s", whily));
+        comp.emit(String.format("%s:", exit));
+        comp.emit("sipush 0");
     }
 }
