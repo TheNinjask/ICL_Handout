@@ -28,7 +28,7 @@ public class ASTDeRef implements ASTNode {
 
     @Override
     public IType typecheker(Env<IType> env) {
-        return TVoid.getInstance();
+        return ref.typecheker(env);
     }
 
 }

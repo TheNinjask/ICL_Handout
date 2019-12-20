@@ -37,7 +37,11 @@ public class ASTApply implements ASTNode {
 
     @Override
     public IType typecheker(Env<IType> env) {
-        return TVoid.getInstance();
+        List <IType> types = new ArrayList<>();
+        for (ASTNode type : args) {
+            types.add(type.typecheker(env));
+        }
+        return TFunType.getInstance(types, body.typecheker(env));
     }
 
 }

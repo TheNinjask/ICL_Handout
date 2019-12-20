@@ -368,12 +368,12 @@ params.add(t1);
     throw new Error("Missing return statement in function");
   }
 
-  static final public Map<String, ASTNode> PL() throws ParseException {Token n;
+  static final public Map<String, ASTNode> PL() throws ParseException {Token out, in;
   ASTNode t, t2;
   Map<String, ASTNode> type = new HashMap();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case Id:{
-      n = jj_consume_token(Id);
+      out = jj_consume_token(Id);
       jj_consume_token(COLON);
       t = TY();
       label_5:
@@ -388,18 +388,14 @@ params.add(t1);
           break label_5;
         }
         jj_consume_token(COMMA);
-        n = jj_consume_token(Id);
+        in = jj_consume_token(Id);
         jj_consume_token(COLON);
         t2 = TY();
-if(type.put(n.image, t2)!=null)
-      t2=t2;
-    //  throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
-
+if(type.put(in.image, t2)!=null)
+      {if (true) throw new TypeError(String.format("Id (%s) assigned twice at same level!", in.image));}
       }
-if(type.put(n.image, t)!=null)
-      t=t;
-      //throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
-
+if(type.put(out.image, t)!=null)
+      {if (true) throw new TypeError(String.format("Id (%s) assigned twice at same level!", out.image));}
       break;
       }
     default:
@@ -686,18 +682,6 @@ t1 = new ASTFunc(t1, mapType);
     return false;
   }
 
-  static private boolean jj_3R_15()
- {
-    if (jj_scan_token(LPAR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14()
- {
-    if (jj_scan_token(Bool)) return true;
-    return false;
-  }
-
   static private boolean jj_3_2()
  {
     Token xsp;
@@ -722,6 +706,18 @@ t1 = new ASTFunc(t1, mapType);
     }
     }
     if (jj_3R_9()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_15()
+ {
+    if (jj_scan_token(LPAR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14()
+ {
+    if (jj_scan_token(Bool)) return true;
     return false;
   }
 
@@ -797,15 +793,15 @@ t1 = new ASTFunc(t1, mapType);
     return false;
   }
 
-  static private boolean jj_3R_25()
- {
-    if (jj_scan_token(PRINTLN)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_10()
  {
     if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_25()
+ {
+    if (jj_scan_token(PRINTLN)) return true;
     return false;
   }
 

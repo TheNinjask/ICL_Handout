@@ -37,8 +37,8 @@ public class ASTFunc implements ASTNode {
         List<IType> types = new ArrayList<>();
         for (Entry<String, ASTNode> param : params.entrySet()) {
             IType tmp = env.find(param.getKey());
-            if(tmp!=param.getValue().typecheker(env))
-                throw new TypeError("Illegal type for function");
+            //if(tmp!=param.getValue().typecheker(env))
+            //    throw new TypeError("Illegal type for function");
             types.add(tmp);
         }
         return TFunType.getInstance(types, func.typecheker(env));

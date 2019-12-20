@@ -30,7 +30,7 @@ public class ASTAssign implements ASTNode {
 
     @Override
     public IType typecheker(Env<IType> env) {
-        return TVoid.getInstance();
+        return TRef.getInstance(value.typecheker(env));
     }
 
 }
