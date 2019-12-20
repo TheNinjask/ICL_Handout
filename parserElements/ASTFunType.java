@@ -31,7 +31,7 @@ public class ASTFunType implements ASTNode {
         for (ASTNode param : paramsTypes) {
             types.add(param.typecheker(env));
         }
-        return TFunType.getInstance(types);
+        return TFunType.getInstance(types, type.typecheker(env));
     }
 
 }

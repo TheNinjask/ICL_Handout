@@ -329,20 +329,31 @@ List<ASTNode> AL():
   {return params;}
 }
 
-/*ASTNode PL():
+Map<String, ASTNode> PL():
 {
   Token n;
   ASTNode t, t2;
+  Map<String, ASTNode> type = new HashMap();
 }
 { 
   (
-    n=<Id> =new TYpe
-      (
-        <COMMA> n=<Id> =new TYpe
-      )
-
+    n=<Id> <COLON> t=TY()
+    (
+      <COMMA> n=<Id> <COLON> t2=TY()
+      {
+    if(type.put(n.image, t2)!=null)
+      t2=t2;
+    //  throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
+  } 
+    )*
+  {
+    if(type.put(n.image, t)!=null)
+      t=t;
+      //throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
+  }        
   )?
-}*/
+  {return type;}
+}
 
 ASTNode TY():
 {
@@ -414,13 +425,8 @@ ASTNode F() :
       }
       | <PRINTLN> t1=E() {t1 = new ASTPrintln(t1);}
       | <FUN> 
-        (n=<Id> {
-          if(!params.add(n.image))
-            throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
-          }
-          (<COMMA>)?
-        )*
-        <APPLY> t1=EM() <END>{t1 = new ASTFunc(t1, params);}
+          mapType = PL()
+        <APPLY> t1=EM() <END>{t1 = new ASTFunc(t1, mapType);}
 
     )
    { return t1; }

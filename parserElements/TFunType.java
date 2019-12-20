@@ -10,7 +10,8 @@ public class TFunType implements IType {
 
     private TFunType(){}
 
-    public static final IType getInstance(List<IType> types){
+    public static final IType getInstance(List<IType> types, IType type){
+        types.add(type);
         TFunType instance = instances.get(types);
         if(instance==null){
             instance = new TFunType();

@@ -368,22 +368,49 @@ params.add(t1);
     throw new Error("Missing return statement in function");
   }
 
-/*ASTNode PL():
-{
-  Token n;
+  static final public Map<String, ASTNode> PL() throws ParseException {Token n;
   ASTNode t, t2;
-}
-{ 
-  (
-    n=<Id> =new TYpe
-      (
-        <COMMA> n=<Id> =new TYpe
-      )
+  Map<String, ASTNode> type = new HashMap();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case Id:{
+      n = jj_consume_token(Id);
+      jj_consume_token(COLON);
+      t = TY();
+      label_5:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+        case COMMA:{
+          ;
+          break;
+          }
+        default:
+          jj_la1[7] = jj_gen;
+          break label_5;
+        }
+        jj_consume_token(COMMA);
+        n = jj_consume_token(Id);
+        jj_consume_token(COLON);
+        t2 = TY();
+if(type.put(n.image, t2)!=null)
+      t2=t2;
+    //  throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
 
-  )?
-}*/
-  static final public 
-ASTNode TY() throws ParseException {Token n;
+      }
+if(type.put(n.image, t)!=null)
+      t=t;
+      //throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
+
+      break;
+      }
+    default:
+      jj_la1[8] = jj_gen;
+      ;
+    }
+{if ("" != null) return type;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public ASTNode TY() throws ParseException {Token n;
   ASTNode t, t2;
   List<ASTNode> types = new ArrayList();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -411,7 +438,7 @@ t = new ASTRefType(t);
       case REF:
       case LPAR:{
         t = TY();
-        label_5:
+        label_6:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
           case COMMA:{
@@ -419,8 +446,8 @@ t = new ASTRefType(t);
             break;
             }
           default:
-            jj_la1[7] = jj_gen;
-            break label_5;
+            jj_la1[9] = jj_gen;
+            break label_6;
           }
           jj_consume_token(COMMA);
           t2 = TY();
@@ -430,7 +457,7 @@ types.add(t);
         break;
         }
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[10] = jj_gen;
         ;
       }
       jj_consume_token(RPAR);
@@ -439,7 +466,7 @@ t = new ASTFunType(types, t);
       break;
       }
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -493,7 +520,7 @@ t1 = new ASTId(n.image);
       }
     case LET:{
       jj_consume_token(LET);
-      label_6:
+      label_7:
       while (true) {
         n = jj_consume_token(Id);
         jj_consume_token(COLON);
@@ -510,8 +537,8 @@ t2=map.put(n.image, t1);
           break;
           }
         default:
-          jj_la1[10] = jj_gen;
-          break label_6;
+          jj_la1[12] = jj_gen;
+          break label_7;
         }
       }
       jj_consume_token(IN);
@@ -563,34 +590,11 @@ t1 = new ASTPrintln(t1);
       }
     case FUN:{
       jj_consume_token(FUN);
-      label_7:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-        case Id:{
-          ;
-          break;
-          }
-        default:
-          jj_la1[11] = jj_gen;
-          break label_7;
-        }
-        n = jj_consume_token(Id);
-if(!params.add(n.image))
-            {if (true) throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));}
-        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-        case COMMA:{
-          jj_consume_token(COMMA);
-          break;
-          }
-        default:
-          jj_la1[12] = jj_gen;
-          ;
-        }
-      }
+      mapType = PL();
       jj_consume_token(APPLY);
       t1 = EM();
       jj_consume_token(END);
-t1 = new ASTFunc(t1, params);
+t1 = new ASTFunc(t1, mapType);
       break;
       }
     default:
@@ -634,12 +638,6 @@ t1 = new ASTFunc(t1, params);
     finally { jj_save(3, xla); }
   }
 
-  static private boolean jj_3R_24()
- {
-    if (jj_scan_token(WHILE)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_9()
  {
     if (jj_3R_10()) return true;
@@ -655,51 +653,6 @@ t1 = new ASTFunc(t1, params);
     if (jj_scan_token(44)) return true;
     }
     if (jj_3R_10()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_23()
- {
-    if (jj_scan_token(IF)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_22()
- {
-    if (jj_scan_token(DEASSIGN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_21()
- {
-    if (jj_scan_token(NEW)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(25)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(26)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(23)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(24)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(21)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(27)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(28)) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    if (jj_3R_9()) return true;
     return false;
   }
 
@@ -745,28 +698,36 @@ t1 = new ASTFunc(t1, params);
     return false;
   }
 
-  static private boolean jj_3R_11()
+  static private boolean jj_3_2()
  {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(25)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(26)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(23)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(24)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(21)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(27)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(28)) return true;
+    }
+    }
+    }
+    }
+    }
+    }
     if (jj_3R_9()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1()
- {
-    if (jj_scan_token(SEMICOLON)) return true;
-    if (jj_3R_8()) return true;
     return false;
   }
 
   static private boolean jj_3R_13()
  {
     if (jj_scan_token(Num)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_10()
- {
-    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -817,6 +778,43 @@ t1 = new ASTFunc(t1, params);
     return false;
   }
 
+  static private boolean jj_3R_11()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1()
+ {
+    if (jj_scan_token(SEMICOLON)) return true;
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_26()
+ {
+    if (jj_scan_token(FUN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_25()
+ {
+    if (jj_scan_token(PRINTLN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10()
+ {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_24()
+ {
+    if (jj_scan_token(WHILE)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_8()
  {
     if (jj_3R_11()) return true;
@@ -835,15 +833,21 @@ t1 = new ASTFunc(t1, params);
     return false;
   }
 
-  static private boolean jj_3R_26()
+  static private boolean jj_3R_23()
  {
-    if (jj_scan_token(FUN)) return true;
+    if (jj_scan_token(IF)) return true;
     return false;
   }
 
-  static private boolean jj_3R_25()
+  static private boolean jj_3R_22()
  {
-    if (jj_scan_token(PRINTLN)) return true;
+    if (jj_scan_token(DEASSIGN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_21()
+ {
+    if (jj_scan_token(NEW)) return true;
     return false;
   }
 
@@ -867,10 +871,10 @@ t1 = new ASTFunc(t1, params);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xe00270e0,0x1fa00000,0x0,0x0,0x100000,0x0,0xe0027020,0x0,0xe00,0xe00,0x0,0x0,0x0,0xe0027020,};
+      jj_la1_0 = new int[] {0xe00270e0,0x1fa00000,0x0,0x0,0x100000,0x0,0xe0027020,0x0,0x0,0x0,0xe00,0xe00,0x0,0xe0027020,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x27c0,0x0,0x600,0x1800,0x2000,0x2,0x27c0,0x2,0x2000,0x2000,0x80,0x80,0x2,0x27c0,};
+      jj_la1_1 = new int[] {0x27c0,0x0,0x600,0x1800,0x2000,0x2,0x27c0,0x2,0x80,0x2,0x2000,0x2000,0x80,0x27c0,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[4];
   static private boolean jj_rescan = false;
