@@ -11,11 +11,9 @@
 	aconst_null
 	astore 4
 	getstatic java/lang/System/out Ljava/io/PrintStream;
-	sipush 420
-	invokestatic java/lang/String/valueOf(I)Ljava/lang/String;
-	invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
-	getstatic java/lang/System/out Ljava/io/PrintStream;
-	sipush 69
+	sipush 10
+	sipush 50
+	iadd
 	invokestatic java/lang/String/valueOf(I)Ljava/lang/String;
 	invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
 	return

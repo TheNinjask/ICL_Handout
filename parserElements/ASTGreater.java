@@ -40,4 +40,13 @@ public class ASTGreater implements ASTNode {
         comp.emit(String.format("%s:", exit));
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType left = t1.typecheker(env);
+        IType right = t2.typecheker(env);
+        if(left.equals(TInt.getInstance()) && right.equals(TInt.getInstance()))
+            return TBool.getInstance();
+        throw new TypeError(String.format("Illegal type (%s) to > operator!"));
+    }
+
 }

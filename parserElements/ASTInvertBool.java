@@ -26,4 +26,11 @@ public class ASTInvertBool implements ASTNode {
         // TODO Auto-generated method stub
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType valType = value.typecheker(env);
+        if(valType.equals(TBool.getInstance()))
+            return TBool.getInstance();
+        throw new TypeError("Illegal type for ~ operator");
+    }
 }

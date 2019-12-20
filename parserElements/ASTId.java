@@ -33,4 +33,9 @@ public class ASTId implements ASTNode {
         );
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        return env.find(val);
+    }
+
 }

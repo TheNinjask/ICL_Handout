@@ -20,4 +20,9 @@ public class ASTRef implements ASTNode {
         //TODO
         //comp.emit(String.format("sipush %s", val ? 1 : 0));
     }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        return TRef.getInstance(ref.typecheker(env));
+    }
 }

@@ -33,4 +33,14 @@ public class ASTPlus implements ASTNode {
         t2.compile(env, comp);
         comp.emit("iadd");
     }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType left = t1.typecheker(env);
+        IType right = t2.typecheker(env);
+        if(left.equals(TInt.getInstance()) && right.equals(TInt.getInstance()))
+            return TInt.getInstance();
+        throw new TypeError(String.format("Illegal type (%s) to + operator!"));
+    }
+
 }

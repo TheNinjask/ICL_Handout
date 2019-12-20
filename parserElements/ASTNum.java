@@ -19,4 +19,9 @@ public class ASTNum implements ASTNode {
     public void compile(Env<FrameComp> env, CodeBlock comp) {
         comp.emit(String.format("sipush %s", val));
     }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        return TInt.getInstance();
+    }
 }

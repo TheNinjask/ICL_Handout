@@ -37,7 +37,7 @@ public class Env<T>{
         return val;
     }
 
-    public T find(String id, FrameComp frame, CodeBlock comp){
+    /*public T find(String id, FrameComp frame, CodeBlock comp){
         T val = dic.get(id);
         if(val == null)
             if(ancestor == null || frame.getSl() == null)
@@ -50,7 +50,7 @@ public class Env<T>{
             frame.getId(), val, "I")
         );
         return val;
-    }
+    }*/
 
     public void assoc(String id, T val){
         dic.put(id, val);

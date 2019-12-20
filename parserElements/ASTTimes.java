@@ -28,10 +28,18 @@ public class ASTTimes implements ASTNode {
 
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
-        // TODO Auto-generated method stub
         t1.compile(env, comp);
         t2.compile(env, comp);
         comp.emit("imul");
+    }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType left = t1.typecheker(env);
+        IType right = t2.typecheker(env);
+        if(left.equals(TInt.getInstance()) && right.equals(TInt.getInstance()))
+            return TInt.getInstance();
+        throw new TypeError(String.format("Illegal type (%s) to * operator!"));
     }
 
 }

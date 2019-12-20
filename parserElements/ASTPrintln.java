@@ -2,6 +2,7 @@ package parserElements;
 
 import compilerElements.CodeBlock;
 import compilerElements.FrameComp;
+import parserExceptions.TypeError;
 
 public class ASTPrintln implements ASTNode {
 
@@ -24,4 +25,13 @@ public class ASTPrintln implements ASTNode {
         comp.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
         comp.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType valType = val.typecheker(env);
+        if(valType.equals(TInt.getInstance()))
+            return TVoid.getInstance();
+        throw new TypeError(String.format("Illegal type (%s) to println operator!"));
+    }
+
 }

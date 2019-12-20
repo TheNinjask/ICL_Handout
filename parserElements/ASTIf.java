@@ -41,4 +41,18 @@ public class ASTIf implements ASTNode {
         comp.emit(String.format("%s:", exit));
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType condType = condition.typecheker(env);
+        if(condType.equals(TBool.getInstance())){
+            IType trueType = trueBody.typecheker(env);
+            IType falseType = falseBody.typecheker(env);
+            if(trueType.equals(falseType))
+                return trueType;
+            else
+                return TVoid.getInstance();
+        }
+        throw new TypeError("Illegal Type for if condition");
+    }
+
 }

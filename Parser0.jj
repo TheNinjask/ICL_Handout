@@ -132,6 +132,12 @@ TOKEN :
   |
   < FINAL: ";;">
   |
+  < INT: ("INT")|("int")|("Int")>
+  |
+  < BOOL: ("BOOL")|("bool")|("Bool")>
+  |
+  < REF: ("REF")|("ref")|("Ref")>
+  |
   < FUN: ("fun")|("FUN")|("Fun")>
   |
   < NEW: ("new")|("NEW")|("New")>
@@ -176,6 +182,8 @@ TOKEN :
   |
   < COMMA: "," >
   |
+  < COLON: ":">
+  |
   < SEMICOLON: ";">
   |
   < IN: ("in")|("IN")|("In")>
@@ -203,13 +211,21 @@ TOKEN :
   //< EL: "\n" >
 }
 
+JAVACODE
+ASTNode cls(){ //TODO rework
+  for(int i = 0; i<50; i++){
+    System.out.println();
+  }
+  return new ASTBool(true);
+}
+
 ASTNode Start():
 { ASTNode t; }
 {
    (
    t = EM() <FINAL>
    | <QUIT><LPAR><RPAR><FINAL> {t=null;System.exit(0);} //this solution seems dorty :s
-   | <CLEAR><FINAL> {t=new ASTBool(false);}//TODO
+   | <CLEAR><FINAL> {t=cls();}
    )
    { return t; }
 }
@@ -318,7 +334,7 @@ List<ASTNode> AL():
   Token n;
   ASTNode t, t2;
 }
-{ //map use
+{ 
   (
     n=<Id> =new TYpe
       (
@@ -328,11 +344,38 @@ List<ASTNode> AL():
   )?
 }*/
 
+ASTNode TY():
+{
+  Token n;
+  ASTNode t, t2;
+  List<ASTNode> types = new ArrayList();
+}
+{
+  (
+    n=<INT> {t = new ASTIntType();}
+    | n=<BOOL> {t = new ASTBoolType();}
+    | n=<REF> t=TY() {t = new ASTRefType(t);}
+    | <LPAR>
+      (
+        t = TY()
+        (
+          <COMMA>
+          t2 = TY()
+          {types.add(t2);}
+        )*
+        {types.add(t);}
+      )?
+      <RPAR> t=TY() {t = new ASTFunType(types, t);}
+  )
+  {return t;}
+}
+
 ASTNode F() :
 { 
   Token n;
   ASTNode t1, t2, t3;
   Map<String, ASTNode> map = new HashMap();
+  Map<String, ASTNode> mapType = new HashMap();
   Set<String> params = new HashSet();
 }
 {
@@ -345,8 +388,9 @@ ASTNode F() :
       | <PLUS> t1=F()
       | n=<Id> {t1 = new ASTId(n.image);}
       | <LET> 
-        (n=<Id> <EQUAL> t1=EM() {
+        (n=<Id> <COLON> t3 = TY() <EQUAL> t1=EM() {
           t2=map.put(n.image, t1);
+          mapType.put(n.image, t3);
           if(t2!=null)
             throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
           }
@@ -354,7 +398,8 @@ ASTNode F() :
         <IN> t2=EM() <END> 
       {
         t1 = new ASTLet(
-          map, 
+          map,
+          mapType, 
           t2);
       }
       | <NEW> t1=F() { t1=new ASTRef(t1);}
@@ -368,13 +413,12 @@ ASTNode F() :
         t1 = new ASTWhile(t1, t2);
       }
       | <PRINTLN> t1=E() {t1 = new ASTPrintln(t1);}
-      //| <PRINTLN> <LPAR> t1=E() <RPAR>{t1 = new ASTPrintln(t1);} not worth? just for more LOOKAHEAD
       | <FUN> 
         (n=<Id> {
           if(!params.add(n.image))
             throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
           }
-          (<COMMA>)*
+          (<COMMA>)?
         )*
         <APPLY> t1=EM() <END>{t1 = new ASTFunc(t1, params);}
 

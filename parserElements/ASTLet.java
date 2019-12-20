@@ -5,14 +5,17 @@ import java.util.Map.Entry;
 
 import compilerElements.CodeBlock;
 import compilerElements.FrameComp;
+import parserExceptions.TypeError;
 
 public class ASTLet implements ASTNode {
 
     Map<String, ASTNode> vars;
+    Map<String, ASTNode> types;
     ASTNode body;
 
-    public ASTLet(Map<String, ASTNode> vars, ASTNode body) {
+    public ASTLet(Map<String, ASTNode> vars, Map<String, ASTNode> types,ASTNode body) {
         this.vars = vars;
+        this.types = types;
         this.body = body;
     }
 
@@ -47,6 +50,21 @@ public class ASTLet implements ASTNode {
         body.compile(newEnv, comp);
         comp.endFrame();
         newEnv.endScope();
+    }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        Env<IType> newEnv = env.beginScope();
+        for (Entry<String, ASTNode> elem : vars.entrySet()) {
+            IType elemType = elem.getValue().typecheker(env);
+            IType type = types.get(elem.getKey()).typecheker(env);
+            if(elemType!=type)
+                throw new TypeError("Illegal type in let");
+            newEnv.assoc(elem.getKey(), elemType);
+        }
+        IType bodyType = body.typecheker(newEnv);
+        newEnv.endScope();
+        return bodyType;
     }
 
 }

@@ -1,5 +1,7 @@
 package parserElements;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import compilerElements.CodeBlock;
@@ -27,6 +29,15 @@ public class ASTFunc implements ASTNode {
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
         //TODO 
+    }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        List<IType> types = new ArrayList<>();
+        for (String param : params) {
+            types.add(env.find(param));
+        }
+        return TFunType.getInstance(types);
     }
 
 }

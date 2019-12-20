@@ -40,4 +40,14 @@ public class ASTWhile implements ASTNode {
         comp.emit(String.format("%s:", exit));
         comp.emit("sipush 0");
     }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType condType = condition.typecheker(env);
+        if(condType.equals(TBool.getInstance())){
+            /*IType bodyType =*/ body.typecheker(env);
+            return TBool.getInstance();
+        }
+        throw new TypeError(String.format("Illegal Type (%s) to while condition"));
+    }
 }

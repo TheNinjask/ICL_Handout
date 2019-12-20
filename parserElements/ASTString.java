@@ -19,4 +19,9 @@ public class ASTString implements ASTNode {
     public void compile(Env<FrameComp> env, CodeBlock comp) {
         //TODO
     }
+
+    @Override
+    public IType typecheker(Env<IType> env) {
+        return TVoid.getInstance();
+    }
 }

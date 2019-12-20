@@ -24,4 +24,10 @@ public class ASTSeq implements ASTNode {
         right.compile(env, comp);
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        left.typecheker(env);
+        return right.typecheker(env);
+    }
+
 }

@@ -27,4 +27,12 @@ public class ASTInvertInt implements ASTNode {
         comp.emit("ineg");
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType valType = value.typecheker(env);
+        if(valType.equals(TInt.getInstance()))
+            return TInt.getInstance();
+        throw new TypeError("Illegal type for - operator");
+    }
+    
 }

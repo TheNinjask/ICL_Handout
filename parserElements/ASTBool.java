@@ -20,4 +20,9 @@ public class ASTBool implements ASTNode {
         comp.emit(String.format("sipush %s", val ? 1 : 0));
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        return TBool.getInstance();
+    }
+
 }

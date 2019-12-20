@@ -34,4 +34,13 @@ public class ASTAnd implements ASTNode {
         comp.emit("iand");
     }
 
+    @Override
+    public IType typecheker(Env<IType> env) {
+        IType left = t1.typecheker(env);
+        IType right = t2.typecheker(env);
+        if(left.equals(TBool.getInstance()) && right.equals(TBool.getInstance()))
+            return TBool.getInstance();
+        throw new TypeError(String.format("Illegal type (%s) to && operator!"));
+    }
+
 }
