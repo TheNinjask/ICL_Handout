@@ -15,15 +15,17 @@
 ## Building Project
 
 To build this project, either run the build.bat (if on windows) or execute the following commands in this order:
+
 *   `javacc Parser0.jj`
 *   `javac *.java`
 
 ## Running Project
 
-To run the project, simply call\
+To run the project, simply call
     `java Parser`
 
 It can also presented some certain arguments:
+
 | Flag | Description Of Value |
 |:-:|:-|
 |-i|The path for the input file to be used instead of user input|
