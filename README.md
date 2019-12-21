@@ -22,7 +22,8 @@ To build this project, either run the build.bat (if on windows) or execute the f
 ## Running Project
 
 To run the project, simply call
-    `java Parser`
+
+*   `java Parser`
 
 It can also presented some certain arguments:
 
@@ -31,6 +32,12 @@ It can also presented some certain arguments:
 |-i|The path for the input file to be used instead of user input|
 |-o|The path for the output file of the compilation|
 |-j|The path of the Jasmin.jar to be used additionaly for the compilation|
+
+## Running Your Compilation
+
+To run your compilation if the flag -j was used, simply call
+
+*   `java Main`
 
 ### Example
 
