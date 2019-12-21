@@ -7,12 +7,20 @@ public class TRef implements IType {
     
     private static final Map<IType, TRef> instances = new HashMap<IType,TRef>();
 
-    private TRef(){}
+    private IType referType;
+
+    private TRef(IType referType){
+        this.referType = referType;
+    }
+
+    public IType getReferType(){
+        return referType;
+    }
 
     public static final IType getInstance(IType type){
         TRef instance = instances.get(type);
         if(instance==null){
-            instance = new TRef();
+            instance = new TRef(type);
             instances.put(type, instance);
         }
         return instance;

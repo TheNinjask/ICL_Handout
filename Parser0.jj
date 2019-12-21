@@ -97,10 +97,12 @@ public class Parser {
     private static final void compiler(Parser parser, String filename, String jasminJar){
       ASTNode exp;
       Env env = new Env<FrameComp>();
+      Env envType = new Env<IType>();
       CodeBlock comp = CodeBlock.getInstance();
       try {
         System.out.print("> ");
         exp = parser.Start();
+        exp.typecheker(envType);
         exp.compile(env, comp);
         comp.dump(filename);
         if(jasminJar!=null)

@@ -48,6 +48,6 @@ public class ASTWhile implements ASTNode {
             /*IType bodyType =*/ body.typecheker(env);
             return TBool.getInstance();
         }
-        throw new TypeError(String.format("Illegal Type (%s) to while condition"));
+        throw new TypeError("Illegal Type to while condition");
     }
 }

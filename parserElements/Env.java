@@ -2,8 +2,6 @@ package parserElements;
 
 import java.util.Map;
 
-import compilerElements.CodeBlock;
-import compilerElements.FrameComp;
 import parserExceptions.TypeError;
 
 import java.util.HashMap;

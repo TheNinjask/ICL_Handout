@@ -40,7 +40,7 @@ public class ASTPlus implements ASTNode {
         IType right = t2.typecheker(env);
         if(left.equals(TInt.getInstance()) && right.equals(TInt.getInstance()))
             return TInt.getInstance();
-        throw new TypeError(String.format("Illegal type (%s) to + operator!"));
+        throw new TypeError("Illegal type to + operator!");
     }
 
 }

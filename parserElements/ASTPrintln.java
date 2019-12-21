@@ -31,7 +31,7 @@ public class ASTPrintln implements ASTNode {
         IType valType = val.typecheker(env);
         if(valType.equals(TInt.getInstance()))
             return TVoid.getInstance();
-        throw new TypeError(String.format("Illegal type (%s) to println operator!"));
+        throw new TypeError("Illegal type to println operator!");
     }
 
 }

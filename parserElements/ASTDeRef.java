@@ -28,7 +28,10 @@ public class ASTDeRef implements ASTNode {
 
     @Override
     public IType typecheker(Env<IType> env) {
-        return ref.typecheker(env);
+        IType refer = ref.typecheker(env);
+        if(refer instanceof TRef) 
+            return ((TRef)refer).getReferType();
+        throw new TypeError("Illegal type to ! operator");
     }
 
 }

@@ -47,7 +47,7 @@ public class ASTEq implements ASTNode {
         IType right = t2.typecheker(env);
         if(left.equals(TInt.getInstance()) && right.equals(TInt.getInstance()))
             return TBool.getInstance();
-        throw new TypeError(String.format("Illegal type (%s) to == operator!"));
+        throw new TypeError("Illegal type to == operator!");
     }
 
 }

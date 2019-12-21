@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import compilerElements.CodeBlock;
 import compilerElements.FrameComp;
-import parserExceptions.TypeError;
 
 public class ASTFunc implements ASTNode {
 

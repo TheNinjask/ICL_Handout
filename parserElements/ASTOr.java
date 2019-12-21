@@ -40,7 +40,7 @@ public class ASTOr implements ASTNode {
         IType right = t2.typecheker(env);
         if(left.equals(TBool.getInstance()) && right.equals(TBool.getInstance()))
             return TBool.getInstance();
-        throw new TypeError(String.format("Illegal type (%s) to || operator!"));
+        throw new TypeError("Illegal type to || operator!");
     }
 
 }
