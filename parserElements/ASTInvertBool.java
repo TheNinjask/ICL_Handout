@@ -23,7 +23,16 @@ public class ASTInvertBool implements ASTNode {
 
     @Override
     public void compile(Env<FrameComp> env, CodeBlock comp) {
-        // TODO Auto-generated method stub
+        String elsy = comp.genLabel();
+        String exit = comp.genLabel();
+        comp.emit("sipush 1");
+        value.compile(env, comp);
+        comp.emit(String.format("if_icmpne %s", elsy));
+        comp.emit(String.format("sipush %s", 0));
+        comp.emit(String.format("goto %s", exit));
+        comp.emit(String.format("%s:", elsy));
+        comp.emit(String.format("sipush %s", 1));
+        comp.emit(String.format("%s:", exit));
     }
 
     @Override

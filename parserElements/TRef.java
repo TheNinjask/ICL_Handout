@@ -25,4 +25,14 @@ public class TRef implements IType {
         }
         return instance;
     }
+
+    @Override
+    public String getType() {
+        return String.format("ref_%s", referType.getType());
+    }
+
+    @Override
+    public String getTypeShortName() {
+        return String.format("ref_%s", referType.getType());
+    }
 }

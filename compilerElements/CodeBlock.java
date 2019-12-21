@@ -6,7 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class CodeBlock {
 
@@ -17,9 +20,9 @@ public class CodeBlock {
     private long incLabel;
     private long incFrame;
     private StringBuffer inst;
-    private long currentOffset;
     private FrameComp currentFrame;
     private List<String> frames;
+    private Map<String, RefComp> refer;
 
     private CodeBlock() {
         incFrame = 0L;
@@ -27,7 +30,7 @@ public class CodeBlock {
         inst = new StringBuffer();
         currentFrame = null;
         frames = new ArrayList<>();
-        currentOffset = 0L;
+        refer = new HashMap<>();
     }
 
     public static CodeBlock getInstance() {
@@ -46,15 +49,23 @@ public class CodeBlock {
 
     public void emit(String instruction) {
         inst.append(String.format("\t%s\n", instruction));
-        currentOffset++;
     }
 
-    public long getCurrentOffset(){
-        return currentOffset;
+    public void emitRef(String type, String typeShortName) {
+        emit(String.format("new ref_%", typeShortName));
+        emit("dup");
+        emit(String.format("invokespecial ref_%s/<init>()V ", typeShortName));
+        emit("dup");
+        if (!refer.containsKey(type))
+            refer.put(type, new RefComp(type, typeShortName));
     }
 
-    public long getPreviousOffset(){
-        return currentOffset-1L;
+    public void emitRefPut(String type, String typeShortName) {
+        emit(String.format("putfield ref_%s/v %s", typeShortName, type));
+    }
+
+    public void emitRefGet(String type, String typeShortName) {
+        emit(String.format("getfield ref_%s/v %s", typeShortName, type));
     }
 
     public void dump(String filename, int... args) throws IOException {
@@ -75,6 +86,9 @@ public class CodeBlock {
         generateMainEnd(out);
         out.flush();
         out.close();
+        for (Entry<String, RefComp> ref : refer.entrySet()) {
+            ref.getValue().dump(".");
+        }
     }
 
     public void compJasminWin(String file, String... jarPath) throws IOException, InterruptedException {
@@ -113,14 +127,6 @@ public class CodeBlock {
         emit("astore 4");
         currentFrame = frame;
         return frame;
-    }
-
-    public long preGenFrame(){
-        return 7L; 
-    }
-
-    public long preEndFrame(){
-        return 3L;
     }
 
     public void endFrame(){

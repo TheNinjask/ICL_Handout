@@ -9,4 +9,14 @@ public class TVoid implements IType {
     public static final IType getInstance(){
         return instance;
     }
+
+    @Override
+    public String getType() {
+        return "void";
+    }
+
+    @Override
+    public String getTypeShortName() {
+        return "void";
+    }
 }

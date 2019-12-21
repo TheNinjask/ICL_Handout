@@ -6,6 +6,10 @@
     Tiago Bica - nº 47207
 ```
 
+## Issues/Notes
+
+*   Rework mechanics of boolean in compilation
+
 ## Pre Requirements
 
 * Java (preferably 8)
