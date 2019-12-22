@@ -52,11 +52,11 @@ public class CodeBlock {
     }
 
     public void emitRef(String type, String typeShortName) {
-        emit(String.format("new ref_%", typeShortName));
+        emit(String.format("new ref_%s", typeShortName));
         emit("dup");
         emit(String.format("invokespecial ref_%s/<init>()V ", typeShortName));
         emit("dup");
-        if (!refer.containsKey(type))
+        //if (!refer.containsKey(type))
             refer.put(type, new RefComp(type, typeShortName));
     }
 
@@ -86,8 +86,8 @@ public class CodeBlock {
         generateMainEnd(out);
         out.flush();
         out.close();
-        for (Entry<String, RefComp> ref : refer.entrySet()) {
-            ref.getValue().dump(".");
+        for (RefComp ref : refer.values()) {
+            ref.dump(".");
         }
     }
 
@@ -97,8 +97,17 @@ public class CodeBlock {
         Process proc = Runtime.getRuntime().exec(cmd);
         // Then retreive the process output
         proc.waitFor();
+        System.out.println(String.format("Compiling %s frames...", frames.size()));
         for (String frame : frames) {
+            System.out.println(String.format("Building %s", frame));
             cmd = String.format("java -jar %s %s", new File(path).getAbsolutePath(), new File(frame).getAbsolutePath());
+            proc = Runtime.getRuntime().exec(cmd);
+            proc.waitFor();
+        }
+        System.out.println(String.format("Compiling %s ref_type...", refer.size()));
+        for (RefComp ref : refer.values()) {
+            System.out.println(String.format("Building %s", ref.getFileName()));
+            cmd = String.format("java -jar %s %s", new File(path).getAbsolutePath(), new File(ref.getFileName()).getAbsolutePath());
             proc = Runtime.getRuntime().exec(cmd);
             proc.waitFor();
         }

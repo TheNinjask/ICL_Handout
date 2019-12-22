@@ -27,12 +27,13 @@ public class ASTEq implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
         //TODO
         String elsy = comp.genLabel();
         String exit = comp.genLabel();
-        t1.compile(env, comp);
-        t2.compile(env, comp);
+        typecheker(type);
+        t1.compile(env, type, comp);
+        t2.compile(env, type, comp);
         comp.emit(String.format("if_icmpne %s", elsy));
         comp.emit("sipush 1");
         comp.emit(String.format("goto %s", exit));

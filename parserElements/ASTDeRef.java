@@ -22,8 +22,10 @@ public class ASTDeRef implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
-        //TODO
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
+        IType typing = typecheker(type);
+        ref.compile(env, type, comp);
+        comp.emitRefGet(typing.getType(), typing.getTypeShortName());
     }
 
     @Override

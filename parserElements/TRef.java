@@ -28,11 +28,11 @@ public class TRef implements IType {
 
     @Override
     public String getType() {
-        return String.format("ref_%s", referType.getType());
+        return String.format("Lref_%s;",referType.getTypeShortName());
     }
 
     @Override
     public String getTypeShortName() {
-        return String.format("ref_%s", referType.getType());
+        return String.format("ref_%s",referType.getTypeShortName());
     }
 }

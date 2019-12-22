@@ -37,13 +37,19 @@ public class TFunType implements IType {
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+        String concat = new String();
+		for (IType iType : paramsType) {
+            concat = concat.length()>0 ? concat + "x" + iType.getType() : iType.getType(); 
+        }
+        return concat + "2" + returnType;
 	}
 
 	@Override
 	public String getTypeShortName() {
-		// TODO Auto-generated method stub
-		return null;
+		String concat = new String();
+		for (IType iType : paramsType) {
+            concat = concat.length()>0 ? concat + "x" + iType.getType() : iType.getType(); 
+        }
+        return concat + "2" + returnType;
 	}
 }

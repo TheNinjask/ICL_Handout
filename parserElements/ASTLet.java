@@ -32,24 +32,33 @@ public class ASTLet implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
         Env<FrameComp> newEnv = env.beginScope();
+        Env<IType> newEnvType = type.beginScope();
         //IValue res;
         FrameComp frame = comp.genFrame(comp.getCurrentFrame());
         for (Entry<String, ASTNode> it : vars.entrySet()) {
             comp.emit("aload 4");
-            String var = frame.addField(it.getKey(), "I");
-            it.getValue().compile(env, comp);
+            
+            it.getValue().compile(env, type, comp);
+            
+            IType elemType = it.getValue().typecheker(type);
+            IType typing = types.get(it.getKey()).typecheker(type);
+            if(elemType!=typing)
+                throw new TypeError("Illegal type in let");
+            String var = frame.addField(it.getKey(), elemType.getType());
+            newEnvType.assoc(it.getKey(), elemType);
             newEnv.assoc(it.getKey(), frame);
             comp.emit(String.format("putfield %s/%s %s",
                 frame.getId(),
                 var,
-                "I"
+                elemType.getType()
             ));  
         }
-        body.compile(newEnv, comp);
+        body.compile(newEnv, newEnvType, comp);
         comp.endFrame();
         newEnv.endScope();
+        newEnvType.endScope();
     }
 
     @Override

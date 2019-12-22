@@ -102,8 +102,8 @@ public class Parser implements ParserConstants {
       try {
         System.out.print("> ");
         exp = parser.Start();
-        exp.typecheker(envType);
-        exp.compile(env, comp);
+        //exp.typecheker(envType);
+        exp.compile(env, envType, comp);
         comp.dump(filename);
         if(jasminJar!=null)
           comp.compJasminWin(filename, jasminJar);

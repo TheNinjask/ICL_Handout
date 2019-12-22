@@ -31,7 +31,7 @@ public class ASTApply implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
         //TODO
     }
 

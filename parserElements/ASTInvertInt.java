@@ -22,8 +22,9 @@ public class ASTInvertInt implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
-        value.compile(env, comp);
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
+        typecheker(type);
+        value.compile(env, type, comp);
         comp.emit("ineg");
     }
 

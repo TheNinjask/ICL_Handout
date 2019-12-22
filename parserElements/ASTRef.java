@@ -16,9 +16,11 @@ public class ASTRef implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
-        //TODO
-        //comp.emit(String.format("sipush %s", val ? 1 : 0));
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
+        TRef typing = (TRef)typecheker(type);
+        comp.emitRef(typing.getReferType().getType(), typing.getReferType().getTypeShortName());
+        ref.compile(env, type, comp);
+        comp.emitRefPut(typing.getReferType().getType(), typing.getReferType().getTypeShortName());
     }
 
     @Override

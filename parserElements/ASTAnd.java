@@ -27,10 +27,11 @@ public class ASTAnd implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
         //TODO
-        t1.compile(env, comp);
-        t2.compile(env, comp);
+        typecheker(type);
+        t1.compile(env, type, comp);
+        t2.compile(env, type, comp);
         comp.emit("iand");
     }
 

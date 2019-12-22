@@ -22,20 +22,24 @@ public class ASTWhile implements ASTNode {
         while(((VBool)iCond).getBool()){
             body.eval(env);
             iCond = condition.eval(env);
+            if(!(iCond instanceof VBool))
+                throw new TypeError(String.format("Illegal arguments (%s) to if condition", error));
         }
         return new VBool(false);
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
+        //phrase below might be wrong
         //this might be wrong due to what happens with numerous cycles
         String whily = comp.genLabel();
         String exit = comp.genLabel();
+        typecheker(type);
         comp.emit(String.format("%s:", whily));
         comp.emit("sipush 1");
-        condition.compile(env, comp);
+        condition.compile(env, type, comp);
         comp.emit(String.format("if_icmpne %s", exit));
-        body.compile(env, comp); //??
+        body.compile(env, type, comp); //??
         comp.emit(String.format("goto %s", whily));
         comp.emit(String.format("%s:", exit));
         comp.emit("sipush 0");

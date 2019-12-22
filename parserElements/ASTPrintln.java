@@ -19,9 +19,10 @@ public class ASTPrintln implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
+        typecheker(type);
         comp.emit("getstatic java/lang/System/out Ljava/io/PrintStream;");
-        val.compile(env, comp);
+        val.compile(env, type, comp);
         comp.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
         comp.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }

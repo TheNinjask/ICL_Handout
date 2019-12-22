@@ -9,8 +9,22 @@ public class RefComp {
 
     private String type;
     private String typeShortName;
+    
     public RefComp(String type, String... typeShortName) {
+        this.type = type;
         this.typeShortName = String.format("ref_%s", typeShortName.length>0 ? typeShortName[0] : type);
+    }
+
+    public String getType(){
+        return type;
+    }
+
+    public String getTypeShortName(){
+        return typeShortName;
+    }
+
+    public String getFileName(){
+        return Paths.get(".", String.format("%s.j", typeShortName)).toString();
     }
 
     public String dump(String path) throws IOException {
@@ -18,7 +32,7 @@ public class RefComp {
         BufferedWriter out = new BufferedWriter(new FileWriter(truePath));
         out.write(String.format(".class %s\n", typeShortName));
         out.write(".super java/lang/Object\n");
-        out.write(String.format(".field public v %s;\n", type));
+        out.write(String.format(".field public v %s\n", type));
         out.write("\n");
         out.write(".method public <init>()V\n");
         out.write("\taload_0\n");

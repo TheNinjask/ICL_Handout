@@ -27,9 +27,10 @@ public class ASTTimes implements ASTNode {
     }
 
     @Override
-    public void compile(Env<FrameComp> env, CodeBlock comp) {
-        t1.compile(env, comp);
-        t2.compile(env, comp);
+    public void compile(Env<FrameComp> env, Env<IType> type, CodeBlock comp) {
+        typecheker(type);
+        t1.compile(env, type, comp);
+        t2.compile(env, type, comp);
         comp.emit("imul");
     }
 

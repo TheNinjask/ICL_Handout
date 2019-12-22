@@ -8,7 +8,9 @@
 
 ## Issues/Notes
 
-*   Rework mechanics of boolean in compilation
+*   Rework mechanics of boolean in compilation;
+*   Rework how Type Checking works (due to many unneccessary? reavaluations);
+*   Issue above might be false due to assignemnts and reassigments for references as example
 
 ## Pre Requirements
 
@@ -36,6 +38,8 @@ It can also presented some certain arguments:
 |-i|The path for the input file to be used instead of user input|
 |-o|The path for the output file of the compilation|
 |-j|The path of the Jasmin.jar to be used additionaly for the compilation|
+
+Extra Note: To leave the interpreter, you can type `quit();;` to leave.
 
 ## Running Your Compilation
 
