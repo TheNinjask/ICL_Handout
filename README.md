@@ -6,6 +6,34 @@
     Tiago Bica - nº 47207
 ```
 
+## Important Notes
+
+The Interpreter for the full language, the input below
+
+```
+let
+    person1 = { name = "joe"; age = 22 }
+    person2 = { name = "mary"; age = 5 }
+    person3 = person1 + { tag = -2 }
+in
+    println person1.age + person2.age;
+    println person3.tag + person3.age;
+end;;
+```
+
+should be 
+
+```
+let
+    person1 : struct = { name = "joe"; age = 22 }
+    person2 : struct = { name = "mary"; age = 5 }
+    person3 : struct = person1 + { tag = -2 }
+in
+    println person1.age + person2.age;
+    println person3.tag + person3.age;
+end;;
+```
+
 ## Issues/Notes
 
 *   Rework mechanics of boolean/references in compilation;

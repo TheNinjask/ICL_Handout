@@ -6,7 +6,7 @@ import parserElements.*;
 import parserExceptions.*;
 import compilerElements.*;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
@@ -350,7 +350,7 @@ Map<String, ASTNode> PL():
 {
   Token out, in;
   ASTNode t, t2;
-  Map<String, ASTNode> type = new HashMap();
+  Map<String, ASTNode> type = new LinkedHashMap();
 }
 { 
   (
@@ -402,8 +402,8 @@ ASTNode F() :
 { 
   Token n, a;
   ASTNode t1, t2, t3;
-  Map<String, ASTNode> map = new HashMap();
-  Map<String, ASTNode> mapType = new HashMap();
+  Map<String, ASTNode> map = new LinkedHashMap ();
+  Map<String, ASTNode> mapType = new LinkedHashMap ();
   Set<String> params = new HashSet();
 }
 {

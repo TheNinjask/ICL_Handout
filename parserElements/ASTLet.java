@@ -23,7 +23,7 @@ public class ASTLet implements ASTNode {
         Env<IValue> newEnv = env.beginScope();
         IValue res;
         for (Entry<String, ASTNode> it : vars.entrySet()) {
-            res = it.getValue().eval(env);
+            res = it.getValue().eval(newEnv);
             newEnv.assoc(it.getKey(), res);
         }
         res = body.eval(newEnv);
@@ -40,7 +40,7 @@ public class ASTLet implements ASTNode {
         for (Entry<String, ASTNode> it : vars.entrySet()) {
             comp.emit("aload 4");
             
-            it.getValue().compile(env, type, comp);
+            it.getValue().compile(newEnv, newEnvType, comp);
             
             IType elemType = it.getValue().typecheker(type);
             IType typing = types.get(it.getKey()).typecheker(type);

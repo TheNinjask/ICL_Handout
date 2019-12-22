@@ -26,6 +26,7 @@ public class Env<T>{
     }
 
     public T find(String id){
+        //System.out.println(String.format("Finding in env: %s", id));
         T val = dic.get(id);
         if(val == null)
             if(ancestor == null)
@@ -51,10 +52,12 @@ public class Env<T>{
     }*/
 
     public void assoc(String id, T val){
+        //System.out.println(String.format("Adding to env: %s, %s", id, val.getClass().getSimpleName()));
         dic.put(id, val);
     }
 
     public Env<T> beginScope(){
+        //System.out.println("Lowering a level");
         Env<T> newEnv = new Env<T>(this);
         return newEnv;
     }
@@ -75,6 +78,7 @@ public class Env<T>{
     }
     */
     public Env<T> endScope(){
+        //System.out.println("Going up a level");
         return ancestor;
     }
 

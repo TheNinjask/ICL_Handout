@@ -6,7 +6,7 @@ import parserElements.*;
 import parserExceptions.*;
 import compilerElements.*;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
@@ -387,7 +387,7 @@ params.add(t1);
 
   static final public Map<String, ASTNode> PL() throws ParseException {Token out, in;
   ASTNode t, t2;
-  Map<String, ASTNode> type = new HashMap();
+  Map<String, ASTNode> type = new LinkedHashMap();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case Id:{
       out = jj_consume_token(Id);
@@ -501,8 +501,8 @@ t = new ASTFunType(types, t);
 
   static final public ASTNode F() throws ParseException {Token n, a;
   ASTNode t1, t2, t3;
-  Map<String, ASTNode> map = new HashMap();
-  Map<String, ASTNode> mapType = new HashMap();
+  Map<String, ASTNode> map = new LinkedHashMap ();
+  Map<String, ASTNode> mapType = new LinkedHashMap ();
   Set<String> params = new HashSet();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case Num:{
