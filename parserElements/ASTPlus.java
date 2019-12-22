@@ -16,14 +16,22 @@ public class ASTPlus implements ASTNode {
     public IValue eval(Env<IValue> env) {
         IValue v1 = t1.eval(env);
         String error = v1.getClass().getSimpleName();
+        IValue v2 = t2.eval(env);
+        String error2 = v2.getClass().getSimpleName();
         if (v1 instanceof VInt) {
-            IValue v2 = t2.eval(env);
             if (v2 instanceof VInt) {
                 return new VInt(((VInt) v1).getval() + ((VInt) v2).getval());
             }
-            error = v2.getClass().getSimpleName();
+        }else if(v1 instanceof VStruct){
+            if (v2 instanceof VStruct) {
+                return new VStruct(((VStruct) v1), ((VStruct) v2));
+            }
+        }else if(v1 instanceof VString){
+            if (v2 instanceof VString) {
+                return new VString(((VString) v1).getval() + ((VString) v2).getval());
+            }
         }
-        throw new TypeError(String.format("Illegal arguments (%s) to + operator", error));
+        throw new TypeError(String.format("Illegal pair arguments (%s,%s) to + operator", error, error2));
     }
 
     @Override

@@ -134,6 +134,10 @@ TOKEN :
   |
   < FINAL: ";;">
   |
+  < STRUCT: ("STRUCT")|("struct")|("Struct")>
+  |
+  < STRING: ("STRING")|("string")|("String")>
+  |
   < INT: ("INT")|("int")|("Int")>
   |
   < BOOL: ("BOOL")|("bool")|("Bool")>
@@ -175,6 +179,14 @@ TOKEN :
   < OR: "||">
   |
   < NOT: ("~")>
+  |
+  < LCBRACKET: "{">
+  |
+  < RCBRACKET: "}">
+  |
+  < DOT: ".">
+  |
+  < QUOTE: "\"">
   |
   < DEASSIGN: "!">
   |
@@ -236,7 +248,7 @@ ASTNode EM():
 { ASTNode t,t2; }
 {
    (
-   t = E() (LOOKAHEAD(2) <SEMICOLON> t2 = EM(){t=new ASTSeq(t,t2);})*
+   t = E() (LOOKAHEAD(2) <SEMICOLON> t2 = EM(){t=new ASTSeq(t,t2);})* (LOOKAHEAD(2) <SEMICOLON>)?
    )
    { return t; }
 }
@@ -303,6 +315,9 @@ ASTNode T():
                   }
                 )
                 |
+                  <DOT> op=<Id>
+                  {t1 = new ASTGetField(t1, op.image);}
+                |
                 ( LOOKAHEAD(2) ( op=<TIMES> | op=<DIV>) t2=T() 
                   {
                     if(op.kind == TIMES)
@@ -365,6 +380,8 @@ ASTNode TY():
   (
     n=<INT> {t = new ASTIntType();}
     | n=<BOOL> {t = new ASTBoolType();}
+    | n=<STRING> {t = new ASTStringType();}
+    | n=<STRUCT> {t = new ASTStructType();}
     | n=<REF> t=TY() {t = new ASTRefType(t);}
     | <LPAR>
       (
@@ -383,7 +400,7 @@ ASTNode TY():
 
 ASTNode F() :
 { 
-  Token n;
+  Token n, a;
   ASTNode t1, t2, t3;
   Map<String, ASTNode> map = new HashMap();
   Map<String, ASTNode> mapType = new HashMap();
@@ -392,7 +409,8 @@ ASTNode F() :
 {
    (
       n=<Num> { t1 = new ASTNum(Integer.parseInt(n.image)); }
-      | n=<Bool> {t1 = new ASTBool(Boolean.parseBoolean(n.image));} 
+      | n=<Bool> {t1 = new ASTBool(Boolean.parseBoolean(n.image));}
+      | <QUOTE>n=<Id><QUOTE> {t1 = new ASTString(n.image);} 
       | <LPAR> t1=EM() <RPAR> 
       | <MINUS> t1=F() { t1=new ASTInvertInt(t1);} 
       | <NOT> t1=F() { t1=new ASTInvertBool(t1);}
@@ -427,7 +445,24 @@ ASTNode F() :
       | <FUN> 
           mapType = PL()
         <APPLY> t1=EM() <END>{t1 = new ASTFunc(t1, mapType);}
-
+      |
+       <LCBRACKET>
+       (
+        n=<Id> <EQUAL> t1 = E()
+        (
+          <SEMICOLON>
+          a=<Id> <EQUAL> t2 = E()
+          {
+          if(map.put(a.image, t2)!=null)
+            throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
+          }
+        )*
+        {
+        if(map.put(n.image, t1)!=null)
+            throw new TypeError(String.format("Id (%s) assigned twice at same level!", n.image));
+        }
+       )?{t1 = new ASTStruct(map);}
+       <RCBRACKET>
     )
    { return t1; }
 }

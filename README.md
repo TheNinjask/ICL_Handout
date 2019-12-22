@@ -8,7 +8,7 @@
 
 ## Issues/Notes
 
-*   Rework mechanics of boolean in compilation;
+*   Rework mechanics of boolean/references in compilation;
 *   Rework how Type Checking works (due to many unneccessary? reavaluations);
 *   Issue above might be false due to assignemnts and reassigments for references as example
 

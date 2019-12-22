@@ -15,7 +15,7 @@ public class ASTPrintln implements ASTNode {
     public IValue eval(Env<IValue> env) {
         IValue value = val.eval(env);
         value.show();
-        return value;
+        return value;//it is not a bug, it is a feature :)
     }
 
     @Override
