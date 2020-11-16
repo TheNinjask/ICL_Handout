@@ -42,8 +42,8 @@ public class ASTLet implements ASTNode {
             
             it.getValue().compile(newEnv, newEnvType, comp);
             
-            IType elemType = it.getValue().typecheker(type);
-            IType typing = types.get(it.getKey()).typecheker(type);
+            IType elemType = it.getValue().typecheker(newEnvType);
+            IType typing = types.get(it.getKey()).typecheker(newEnvType);
             if(elemType!=typing)
                 throw new TypeError("Illegal type in let");
             String var = frame.addField(it.getKey(), elemType.getType());
